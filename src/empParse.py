@@ -100,7 +100,7 @@ def updateDesignations(lst, mapType):
     DB = empDb.megaDB['SECTOR']
     changes = []
     for col, row, t in lst:
-        if t not in ' ?' and not empDb.megaDB['sectortype'].has_key(t):
+        if t not in ' ?X' and not empDb.megaDB['sectortype'].has_key(t):
             # Exclusion of all sector designations that aren't actual
             # designations.  Still buggy as it doesn't handle bmaps. 
             continue
@@ -108,7 +108,11 @@ def updateDesignations(lst, mapType):
         oldown = ldict.get('owner')
         olddes = ldict.get('des')
         ndict = {}
-        if mapType in ('bmap', 'land'):
+        if t == 'X' and mapType != 'bmap':
+            continue
+        if t == 'X' and mapType == 'bmap' and olddes == '.':
+            ndict['des'] = t
+        elif mapType in ('bmap', 'land'):
             # bmap
             if t == ' ':
                 continue
@@ -304,15 +308,15 @@ def getLookInfo(line, unitType = 'UNKNOWN'):
         r"^ with (?:approx )?(?P<val>\d+) (?P<comd>\S+)(?P<next>.*)$")
 
     if 'SHIPNAMES' in empDb.megaDB['version']['enabledOptions']:
-        look_ship_info = re.compile(r"^(?P<counName>\S+)\s+"
-                                    +r"\(\#(?P<counId>\d+)\)\s+"
+        look_ship_info = re.compile(r"^\s*(?P<counName>\S+)\s+"
+                                    +r"\(\#\s*(?P<counId>\d+)\)\s+"
                                     +r"(?P<shipType>\S+).*"
                                     +r"\(\#(?P<shipId>\d+)\)\s+"
                                     +r"@ (?P<sectorX>-?\d+),(?P<sectorY>-?\d+)\s*$"
                                     )
     else:
-        look_ship_info = re.compile(r"^(?P<counName>\S+)\s+"
-                                    +r"\(\#(?P<counId>\d+)\)\s+"
+        look_ship_info = re.compile(r"^\s*(?P<counName>\S+)\s+"
+                                    +r"\(\#(\s*?P<counId>\d+)\)\s+"
                                     +r"(?P<shipType>\S+).*"
                                     +r"\#(?P<shipId>\d+)\s+"
                                     +r"@ (?P<sectorX>-?\d+),(?P<sectorY>-?\d+)\s*$"
@@ -1067,16 +1071,7 @@ class ParseCoastWatch(empQueue.baseDisp):
     line = re.compile("^\s*"+s_counIdent+" "+s_shipIdent+" @ "+s_sector)
     def data(self, msg):
         self.out.data(msg)
-        mm = self.line.match(msg)
-        if mm:
-            x, y, id, coun = map(
-                string.atoi,
-                mm.group('sectorX', 'sectorY', 'shipId', 'counId'))
-            empDb.megaDB['SHIPS'].updates([
-                {'id': id, 'type':mm.group('shipType'),
-                 'x': x, 'y': y,
-                 'owner':empDb.megaDB['countries'].resolveNameId(
-                     mm.group('counName'), coun)}])
+        getLookInfo(msg, 'SHIP')
 
 class ParseSate(empQueue.baseDisp):
     def Begin(self, cmd):
