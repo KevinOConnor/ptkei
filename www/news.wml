@@ -2,6 +2,16 @@
 
 <titre>What's new?</titre>
 
+<h3>Notes for version 1.17.0</h3>
+
+<ul>
+<li>Support of mine display on the map. </li>
+
+<li>Various parsing bugfixes (ship names, sonar map, map, ...). </li>
+</ul>
+
+<p>See the Changelog file for details</p>
+
 <h3>Notes for version 1.16.0</h3>
 
 <ul>
