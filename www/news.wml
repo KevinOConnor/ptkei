@@ -3,6 +3,16 @@
 <titre>What's new?</titre>
 
 
+
+<h3>Notes for version 1.18.1</h3>
+<ul>
+<li>Fixed some compatibility issues: ptkei should run smoothly with Python
+versions from 1.5.2 up to 2.3. </li>
+<li>Bugfixes, code cleaning (thanks to Kevin O'Connor), see
+ptkei/src/Changelog for details.
+</ul>
+
+
 <h3>Notes for version 1.18.0</h3>
 <ul>
 <li>Added support for @x,y:d sector ranges.</li>
