@@ -304,9 +304,6 @@ def getLookInfo(line, unitType = 'UNKNOWN'):
     with 999 civ @ -20,54'.  If so, parses it, extracts information
     out of it, updates the database and returns 1 otherwise returns
     0."""
-    
-    look_info = re.compile(r"^(?:Your|"+s_counIdent+") "+ParseUnits.s_shipOrSector
-                           +" @ "+s_sector+"$")
     look_stats = re.compile(
         r"^ with (?:approx )?(?P<val>\d+) (?P<comd>\S+)(?P<next>.*)$")
 
@@ -946,6 +943,9 @@ class ParseUnits(empQueue.baseDisp):
             """we do nothing here"""
         self.Map = []
         self.num = None
+
+look_info = re.compile(r"^(?:Your|"+s_counIdent+") "+ParseUnits.s_shipOrSector
+                       +" @ "+s_sector+"$")
 
 class ParseSimpleTime(empQueue.baseDisp):
     """Simple class that will extract the time from the first line."""
@@ -1872,7 +1872,7 @@ class ParseShow(empQueue.baseDisp):
             empDb.megaDB['sectortype'][item[0]]['hcm_eff'] =  string.atoi(item[4])
             return
         if self.what == 'sest':
-            global sectorDesignationConvert, sectorNameConvert, s_sectorName 
+            global sectorDesignationConvert, sectorNameConvert, s_sectorName, look_info
             item = string.split(msg)
             type = item[0]
             item[0:1] = []
@@ -1913,8 +1913,8 @@ class ParseShow(empQueue.baseDisp):
                 ParseAttack.attackInfo = re.compile("^"+s_sector
                             +" is a "+s_eff+" "+s_counName+" "+s_sectorName
                             +r" with approximately "+ParseAttack.s_mil+" military\.$")
-                getLookInfo.look_info = re.compile(r"^(?:Your|"+s_counIdent+") "+ParseUnits.s_shipOrSector
-                                                   +" @ "+s_sector+"$")
+                look_info = re.compile(r"^(?:Your|"+s_counIdent+") "+ParseUnits.s_shipOrSector
+                                       +" @ "+s_sector+"$")
             return
         if self.what == 'seca':
             if len(msg) < 2 or msg[0] == ' ' or msg[1] != ' ':
