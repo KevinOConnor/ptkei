@@ -1,3 +1,8 @@
+2003-06-12  Kevin O'Connor  <kevin@ohio.localdomain>
+
+	* empCmd.py, MapWin.py, empTk.py: Added sendRefresh value to
+	objects that didn't have one.
+
 2003-06-12  Laurent Martin  <laurent@lfmm.org>
 
 	* empParse.py(ParseSpyPlane.data): Fixed the handling of
