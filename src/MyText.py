@@ -5,7 +5,7 @@ import string
 # (http://anygui.sourceforge.net).  It can be found in the source file
 # backends/tkgui.py.
 
-# Copyright © 2001, 2002 Magnus Lie Hetland, Thomas Heller, Alex
+# Copyright (c) 2001, 2002 Magnus Lie Hetland, Thomas Heller, Alex
 # Martelli, Greg Ewing, Joseph A. Knapka, Matthew Schinckel, Kalle
 # Svensson, Shanky Tiwari, Laura Creighton, Dallas T. Johnston,
 # Patrick K. O'Brien, Phil Cook.
