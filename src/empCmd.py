@@ -350,11 +350,13 @@ class baseCommand:
                 command to the server.
     """
 
+    # EmpParse (command registration) required fields:
     description = "No help available."
-
     defaultPreList = defaultBinding = None
+
+    # Redefinable fields:
     sendRefresh = None
-    invoke = receive = transmit = None
+    invoke = receive = None
     commandFormat = None
     commandUsage = None
 
@@ -381,16 +383,27 @@ class baseCommand:
         if self.invoke is not None:
             self.invoke()
         # Add receive/transmit method as a callback
-        if self.receive is not None or self.transmit is not None:
-            flags = empQueue.QU_FULLSYNC
-            if self.transmit is not None:
-                flags = empQueue.QU_BURST
+        if self.receive is not None or self.sending is not None:
 ##  	    # Send DB update commands
 ##  	    if self.sendRefresh:
 ##  		ioq.Send("rdb"+self.sendRefresh, self.out)
             # Arrange for callback from queue code
-            ioq.sock.AddHandler(empQueue.DummyHandler(
-                match.string, self.out, self.receive, self.transmit, flags))
+            ioq.sock.AddHandler(self)
+
+    # EmpQueue required fields:
+    preFlags = empQueue.QU_BURST
+    postFlags = empQueue.QU_FULLSYNC
+    command = None
+    sending = None
+
+    def start(self):
+        """EmpIOQueue Handler: Previous command completed; start this one."""
+        # Ughh..
+        if self.receive is not None:
+            s = self.commandMatch.string
+            self.out.Begin(s)
+            self.receive()
+            self.out.End(s)
 
 
 class CmdDefList(baseCommand):
@@ -624,6 +637,8 @@ class CmdRefresh(baseCommand):
     syncFormat = re.compile(
         r"^(?P<total>re)?rdb(?P<pre>P)?(?P<flags>[eslpno]*)$")
 
+    postFlags = empQueue.QU_BURST
+
     commandFlags = [('e', 'SECTOR', 'dump'),
                     ('l', 'LAND UNITS', 'ldump'),
                     ('s', 'SHIPS', 'sdump'),
@@ -647,10 +662,9 @@ class CmdRefresh(baseCommand):
 
     def checkPending(self, qElem):
         """empQueue scan callback: Don't send redundant commands."""
-        if (qElem is empQueue.DummyHandler
-            and qElem.tcallback.__class__ is self.__class__):
+        if qElem.__class__ is self.__class__:
             # Found a refresh command pending - don't send any repeated dumps
-            for i in qElem.callback.dumpList:
+            for i in qElem.dumpList:
                 pos = string.find(self.dumpList, i)
                 if pos != -1:
                     self.dumpList = self.dumpList[:pos] + self.dumpList[pos+1:]
@@ -658,7 +672,9 @@ class CmdRefresh(baseCommand):
                         # No dump commands left - end scan
                         return 1
 
-    def transmit(self, qPos):
+    def sending(self):
+        # Ughh.
+        qPos = self.ioq.sock.FLSentLev
         # Check if parts of this dump can be picked up by a pending dump.
         if not self.persistent:
             self.ioq.sock.scanQueue(self.checkPending, start=qPos+1)
