@@ -1,3 +1,8 @@
+2003-02-19  Laurent Martin  <laurent@lfmm.org>
+
+	* empParse(ParseUnits.data): Handle the case of a sonar output
+	containing several sonar maps.
+
 2002-11-07  Laurent Martin  <laurent@lfmm.org>
 
 	* empParse(ParseCoastWatch.data): the method body has been
