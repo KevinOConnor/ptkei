@@ -291,7 +291,7 @@ class mapSubWin:
                         self.Map.delete(i)
             if own == CN_OWNED:
                 mob = j.get('mob')
-                if mob is None or mob == 0:
+                if mob is None or mob <= 0:
                     hexName = "nomobSector"
                 else:
                     hexName = "ownedSector"
