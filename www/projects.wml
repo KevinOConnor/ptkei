@@ -1,0 +1,38 @@
+#use wml::tmpl::template name=ptkei select=home
+
+<titre>Projects for PTkEI</titre>
+
+<p>Here is a list of things I consider adding to PTkEI. </p>
+
+
+<ul> 
+
+<li>Add a <em>building projection</em> command to see if harbours,
+headquarters and airfields have enough commodities to build units and
+if not to list the amount missing. </li>
+
+<li>Add a <em>Fort</em> command that shows on the map the firing zone
+of forts. (see Kevin's beta)</li>
+
+<li>Add some feature to show the distance a ship could navigate this
+turn or the maximum distance a ship could navigate with its current
+amount of fuel.  The distance could be shown on the display or as
+text. </li>
+
+<li>Better handling of max population in the census window, taking
+into account the RES_POP option. (see Kevin's beta) </li>
+
+<li>Have an autosaving option to save the database every <var>x</var>
+minutes. </li>
+
+<li>Have a command to copy all messages and announcements to a
+file. </li>
+
+<li>Check the portability of the database, I'm not sure it is really
+fully portable. </li>
+
+<li>Maybe compress the database. E.g. the Custom Sycamore game
+database ended up using more than 400&nbsp;ko but only 7 once
+compressed. </li>
+
+</ul>

@@ -1,0 +1,15 @@
+#use wml::tmpl::template name=ptkei select=home
+
+<titre>PTkEI Home Page</titre>
+
+<p>The Python/Tk Empire Interface is a graphical front end to the <strong><a
+href="http://www.empire.cx/">Wolfpack Empire server</a></strong>. Ptkei (the
+client's nickname) provides a powerful graphics based interface to
+what would otherwise be a purely terminal based game.
+
+<p>This client functions solely as a client. In order to use this
+program effectively one must be familiar with Empire.
+
+<p>Python is a very high-level interpretive programming
+language. Ptkei uses this language (and its interface to Tcl/Tk) to
+provide a flexible, portable, and fast interface.

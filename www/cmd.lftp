@@ -1,0 +1,5 @@
+open lfmm
+cd www/ptkei
+mirror -v -n -R -x "wml$" -x "~$"
+quit
+

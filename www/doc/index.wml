@@ -1,0 +1,13 @@
+#use wml::tmpl::template name=ptkei select=doc
+
+<titre>Online Documentation</titre>
+
+<p>The following files can also be found into the PTkEI package.  Some of them aren't up to date with the current version in the package.  </li>
+
+<ul>
+<li><a href="README.html">README</a> (outdated)
+<li><a href="TIPS.html">TIPS</a>
+<li><a href="commands.html">commands</a>
+<li><a href="gui.html">GUI</a>
+<li><a href="CREDITS.html">CREDITS</a>
+</ul>

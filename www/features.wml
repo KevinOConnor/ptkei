@@ -1,0 +1,197 @@
+#use wml::tmpl::template name=ptkei select=features
+
+<titre>Features</titre>
+
+    <ul>
+      <li><a href="#portability">Portability</a></li>
+      <li><a href="#map_features">Map Features</a></li>
+      <li><a href="#command_line">Command Line</a></li>
+      <li><a href="#socket_interface">Socket Interface</a></li>
+      <li><a href="#smart_features">Smart Features</a></li>
+    </ul>
+
+    <h2><a name="portability">Portability</a></h2>
+
+    <p>Portability is a major concern of the design and development of
+    Ptkei.  Some key features include: </p>
+
+    <ul>
+      <li>
+	<strong>Multiple platforms.</strong> The client is known to
+	run on 32-bit Windows, Macintosh, and a variety of Unix based
+	machines.  The client does not need to be recompiled; the
+	interpretive based Python language allows the same client code
+	to run nearly anywhere.
+      </li>
+
+      <li>
+	<strong>Graphical or text-only.</strong> Each time the client
+	starts, it checks for a graphical display.  The client is
+	designed to be used with graphics; however, if this is not
+	possible the client will revert to a text-only interface.  The
+	flexibility of the Python environment allows the same source
+	code to seamlessly use a GUI, or a text-only environment.
+      </li>
+
+      <li>
+	<strong>Portable database.</strong> Users that connect to the
+	Internet using a variety of machines will benefit from the
+	client's portable database format.  Just transfer the database
+	from one platform to another and all gathered information will
+	be available.
+      </li>
+    </ul>
+    
+    <h2><a name="map_features">Map Features</a></h2>
+
+    <p>
+      One of the biggest areas a graphical client can excel over a
+      text-only client is its display and use of a graphical map.
+      Graphical maps have the advantage of allowing diverse
+      information to be displayed in a compact intuitive format.  (It
+      also doesn't scroll off the screen.)  The map window in Ptkei
+      includes the following features:
+    </p>
+
+    <ul>
+      <li>
+	Scalable, Scrollable, and Re-Centerable.  The map window may
+	be zoomed in our out (Scalable); it can be scrolled up/down or
+	left/right (Scrollable); and any sector may be chosen as the
+	virtual "center" of the map.  (Recenterable)
+      </li>
+
+      <li>
+	Fast Updates.  The client utilizes the Tk canvas widget to
+	buffer all graphics.  This allows the fast Tk based routines
+	to do the scrolling and scaling.  After the initial drawing,
+	all further updates and manipulations are usually done with
+	little or no lag.
+      </li>
+
+      <li>
+	Multiple Maps.  In addition to the main map window, any number
+	of additional map windows may be opened.  These additional
+	windows can each have their own scale, center, and position.
+      </li>
+
+      <li>
+	Easy Coordinate Access.  Both coordinate locations and
+	coordinate ranges can be quickly and easily inserted into the
+	command line by simply clicking on a sector (or clicking and
+	dragging a range of sectors) using the middle mouse button.
+      </li>
+    </ul>
+
+
+    <h2><a name="command_line">Command Line</a></h2>
+
+    <p>
+      Other popular GUI empire clients (such as XEmp and WinACE)
+      attempt to mask the command-line via pop up menus and other
+      click-and-point mechanisms.  Arguably, these methods make the
+      empire server easy to understand at first; however, they also
+      make the client slower for "power-users" that already know the
+      commands.
+    </p>
+
+    <p>
+      The Ptkei client doesn't use this method: All of its graphical
+      features are designed to be used in conjunction with the
+      command-line.
+    </p>
+
+    <ul>
+      <li>
+	The client design specifies that all keystrokes go directly to
+	the command-line.  Commands can be entered and sent, even when
+	the user is in the middle of performing GUI based actions.
+	This makes the client as fast as a text-only client at all
+	times.  <strong> There is never a need to downgrade the
+	interface or revert to text-only mode - when the battle gets
+	rough and speed becomes essential, just put the mouse aside
+	and type commands! </strong> 
+      </li>
+
+      <li>
+	The client always tries to "listen in" to the server output,
+	and will update the graphical displays where it can.  All of
+	its parsers are based on server commands.  These commands are
+	parsed the same regardless of whether they originated from a
+	GUI action or directly from the user.
+      </li>
+
+      <li>
+	There is full support for standard history substitution and
+	command aliasing.
+      </li>
+    </ul>
+
+    <h2><a name="socket_interface">Socket Interface</a></h2>
+
+    <p>
+      The underlying socket interface that is used by both the
+      text-only and Tk interfaces has a number of advanced features:
+    </p>
+
+    <ul>
+      <li>
+	Seamless connection/disconnection.  When using the graphical
+	interface, any condition that causes the client to disconnect
+	(an error or a "bye" command) will place the client in
+	off-line mode.  When further commands are issued, the
+	connection will be seamlessly reopened.
+      </li>
+
+      <li>
+	Error Handling.  Most error conditions will automatically be
+	caught using Python's powerful exception handling
+	capabilities.  Socket errors and unknown socket conditions
+	will only cause the connection to be closed; further commands
+	will then seamlessly attempt a reconnection to the server.
+      </li>
+
+      <li>
+	Optional Asynchronous Commands.  The client can mark commands
+	to be sent asynchronously.  Multiple asynchronous commands
+	will be sent to the server at the same time.  This drastically
+	reduces the latency of sending commands and makes the
+	networking code within Ptkei as fast as Lafe, emp_client and
+	raw telnet.  Ptkei will parse asynchronous commands the same
+	as it would normal commands.
+      </li>
+    </ul>
+
+    <h2><a name="smart_features">Smart Features</a></h2>
+
+    <p>
+      The client currently has many "smart" features, some small and
+      others large.  See the user documentation for specifics.  Some
+      of the really useful features include:
+    </p>
+
+    <ul>
+      <li>
+	Foreach Command: Similar to PEI's foreach command, this
+	command allows an arbitrary Python expression to be evaluated
+	on an arbitrary set of sectors.
+      </li>
+
+      <li>
+	MMove Command: This command can be used to quickly and
+	efficiently redistribute commodities throughout one's country.
+      </li>
+
+      <li>
+	Predict Command: This command displays information about the
+	effects of an update on a sector.  This output is also
+	available in the Sector Census Window.
+      </li>
+
+      <li>
+	Nova Command: This feature allows a country to quickly explore
+	into unowned adjacent wilderness sectors.
+      </li>
+    </ul>
+
+

@@ -1,0 +1,7 @@
+#use wml::tmpl::template name=ptkei select=contact
+
+<titre>Contacting the Author</titre>
+
+<p>The Python/Tk Empire interface was written by Kevin O'Connor and is
+currently being maintained by Laurent Martin (<a
+href="mailto:laurent@lfmm.org">laurent@lfmm.org</a>). </p>

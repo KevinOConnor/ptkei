@@ -1,0 +1,24 @@
+#use wml::tmpl::template name=ptkei select=screenshots
+
+<titre>Ptkei 1.16.0 screeshots</titre>
+
+
+    <table border=1>
+      <tr>
+	<th>Unix/X11</th>
+	<th>Windows</th>
+      </tr>
+      <tr>
+	<td><a href="X11.png"><img src="X11-mini.png"></a></td>
+	<td><a href="Win.png"><img src="Win-mini.png"></a></td>
+      </tr>
+    </table>
+<p>Click on the above images to display the full picture.</p>
+
+
+<p> Both of the above pictures are using the same database.  (The database
+was copied in binary mode between the systems.) </p>
+
+<p> There are also some pictures of Ptkei-0.32 on a <a
+href="macpics.html">Macintosh</a> machine. </p>
+

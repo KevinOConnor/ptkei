@@ -1,0 +1,46 @@
+#use wml::des::navbar
+
+<define-tag titre endtag=required>{#TITRE#:%body:#TITRE#}</define-tag>
+
+<navbar:define name=ptkei>
+  <navbar:header></navbar:header>
+  <navbar:footer></navbar:footer>
+  <navbar:prolog type=N><p></navbar:prolog>
+  <navbar:epilog type=N></p></navbar:epilog>
+  <navbar:prolog type=S><p><strong></navbar:prolog>
+  <navbar:epilog type=S></p></strong></navbar:epilog>
+  <navbar:button id=home txt="PTkEI" url="$(ROOT)/index.html" hint="PTkEI Home Page">
+  <navbar:button id=news txt="What's new?" url="$(ROOT)/news.html" hint="What&#180;s new?">
+  <navbar:button id=features txt="Features" url="$(ROOT)/features.html" hint="Features">
+  <navbar:button id=screenshots txt="Screenshots" url="$(ROOT)/screenshots.html" hint="Screenshots">
+  <navbar:button id=doc txt="Documentation" url="$(ROOT)/doc/index.html" hint="Documentation">
+  <navbar:button id=download txt="Download" url="$(ROOT)/download.html" hint="Download">
+  <navbar:button id=author txt="Contacting the Author" url="$(ROOT)/contact.html" hint="Contacting the Author">
+</navbar:define>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <title>{#TITRE#}</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <style type="text/css">
+	a { text-decoration: none; }
+        a:hover {text-decoration: underline;}
+    </style>
+  </head>
+<body bgcolor="#ffffff">
+<table width="100%" cellpadding="3" cellspacing="0" border="0">
+<tr>
+<td width="150" valign="top" align="left" nowrap>
+<navbar:render name=$(name) select=$(select) nohints>
+</td>
+<td valign="top" align="left" width="90%">
+<h1 align="center">{#TITRE#}</h1>
+{#BODY#}
+</td>
+</tr>
+</table>
+</body>
+</html>
+
+{#BODY#:

@@ -1,0 +1,185 @@
+#use wml::tmpl::template name=ptkei select=news
+
+<titre>What's new?</titre>
+
+<h3>Notes for version 1.16.0</h3>
+
+<ul>
+<li>Various bug fixes (food prediction, recon performed by non-spy
+planes, handling of lookout/llookout commands, efficiency prediction,
+...)</li>
+
+<li>Added a <strong>setfood</strong> command that automatically sets
+food thresholds. </li>
+
+<li>Added a <strong>Disp</strong> command that highlights sectors
+using a color gradient (patch by Patrick Guelat). </li>
+
+</ul>
+
+<p>See the Changelog file for details</p>
+
+
+<h3>Notes for version 1.15.0</h3>
+
+<ul>
+<li>Added a command <b>projection</b> that lists needed commodities to
+build units to 100%. </li>
+
+<li>Added a command <b>dmove</b> that behaves like <b>mmove</b> except
+that it takes thresholds as target levels. </li>
+
+<li>The command <b>remove</b> has been rewritten: it now takes a
+sector range as argument. </li>
+
+<li>Two bugs have been fixed in the <b>mmove</b> command. </li>
+
+<li>Several bugs in parsing functions have been fixed too (thanks to
+Mark Olzheim). </li>
+</ul>
+<p>See the Changelog file for details</p>
+
+<h3>Notes for version 1.14.0</h3>
+
+<ul>
+<li>New territories: compatible with the new server (4.2.10);</li>
+<li>Units are now listed in numerical order;
+<li>Two new commands 'danno' and 'dtele' that dump all announcements
+        and telegrams received. 
+<li>Automatic detection of new sector types.
+<li>Fixed the parsing of the satellite command (it now detects land units and ships);
+<li>Fixed a bug in the handling of sonar.
+<li><strong>The database format used in this new version isn't compatible with
+previous versions of ptkei.  Read the README.html file if you want to upgrade
+your old database to the new format. </strong>
+</ul>
+
+<h3>Notes for version 1.13.3</h3>
+
+<ul>
+<li>PTkEI has now a new maintainer (<a href="mailto:laurent@lfmm.org">Laurent Martin</a>). </li>
+<li>Fixed compatibility issues with Python 1.6 and above. </li>
+<li>Improved sonar output parsing. </li>
+<li>Added a new command 'remove' to remove units from the database. </li>
+</ul>
+
+<h3>Notes for version 1.12</h3>
+
+<p> Version 1.12 is mainly a bug-fix update to version 1.10.  Several minor
+bug fixes, some minor code reorganization, and documentation updates were
+performed.
+
+<p> This web-site will be going away shortly.  The author is losing his
+University accounts.  This will also effect the main author's email
+address.
+
+<h3> Notes for version 1.10 </h3>
+
+<p> Version 1.10 is a bug-fix update to 0.35a.  Beta version 0.35a was
+found to be stable, and I am confident in calling the new ptkei "stable".
+
+<h3> Notes for version 0.35a </h3>
+
+<dl>
+<dt>
+Telegram Window Improvements:
+<dd>
+<ul>
+<li>
+	The telegram window is now capable of sending new telegrams and
+	announcements.  When this option is used for telegrams, a dialog
+	box will prompt for the country to send the message to.
+<li>
+	New support for searching and limiting available correspondence.
+	At the top of the telegram window is an entry box that allows a
+	standard regular expression to be entered.  This pattern can be
+	used to limit the messages to only those that meet the search.
+</ul>
+
+<dt>
+<p> Improved display performance.
+<dd>
+The command-line window has been re-organized to support better output
+buffering.  This change improves the responsiveness of the client when a
+significant amount text is being displayed.
+
+<dt>
+<p> Improved support for installation and playing on GUI based operating
+systems.
+<dd>
+<ul>
+<li>
+	Better organization of the Ptkei package.  The client now comes
+	packaged using several directories.  There is a src/ sub-directory
+	that contains the programs and a doc/ sub-directory that contains
+	the documentation.  The main directory only contains the empire.py
+	executable script and the configuration files.
+<li>
+	Per-platform graphical initialization files.  At program startup
+	ptkei will detect which platform is being used and will load a
+	platform specific Tk initialization file.  This enhancement makes
+	the client usable out-of-the-box on both Unix and Windows.
+<li>
+	Dynamic database loading and saving.  In addition to the existing
+	method of specifying a database on the command-line, it is now
+	possible to select a database by pointing-and-clicking from within
+	the program.  This flexibility allows users of GUI only interfaces
+	(such as windows) to make use of multiple databases when
+	command-line arguments are not easily accessible.
+<li>
+	HTML documentation files.  The user documentation has been updated
+	from plain text to html files.  Since the client is usable under a
+	variety of platforms, it made sense to use an extremely portable
+	documenting language.
+</ul>
+
+<dt>
+<p> Improved Database Storage
+<dd>
+The database has been completely re-organized.  The new storage method
+improves the speed and programmability of client-side "smart" features.  It
+also makes the hard-copy database leaner and more-flexible.
+
+<p> Unfortunately, this change makes databases from previous releases
+incompatible with this release.
+
+<dt>
+<p> Sector predictions.
+<dd>
+The Sector Census Window now has a predictions area.  In this area, the
+client displays information about what will happen during a server update.
+Currently, it supports population growth statistics, starvation warnings,
+worker information, and new efficiency data.
+
+<dt>
+<p> Graphical Move Utility
+<dd>
+The client features a point-and-click moving utility.  By pressing mouse
+button 1 over the quantity field in the Censor window commodity area, the
+main map window will be placed in a Move mode.  The Move mode allows paths
+and quantities to be selected graphically.  It features the following
+abilities:
+<ul>
+<li>
+	Point-and-click source and destination sectors.  By pressing mouse
+	button 3 over a source or destination sector, the source or
+	destination can be dragged to another sector.  The client will
+	automatically update the bestpath.
+<li>
+	Multiple mobility sinks.  Pressing mouse button 3 over a new
+	sector will cause that sector to become the destination and will
+	make the previous destination become a "mobility sink".  A mobility
+	sink is a way-point that the commodities are dropped in and then
+	immediately moved from.
+
+	<p> Pressing mouse button 3 over a sector that is part of the
+	displayed path will cause a mobility sink to be added midway into
+	the path.
+<li>
+	Automatic mobility usages.  Anytime the quantity field is updated
+	or the path is changed, the display seamlessly updates guesses
+	about the mobility requirements of the move.  This gives instant
+	feedback to potential problems and allows mobility sinks to be
+	added intelligently.
+</ul>
+</dl>
