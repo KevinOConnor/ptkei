@@ -19,48 +19,20 @@
   <navbar:button id=author txt="Contacting the Author" url="$(ROOT)/contact.html" hint="Contacting the Author">
 </navbar:define>
 
-<?xml version="1.0" encoding="us-ascii"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>{#TITRE#}</title>
-    <style type="text/css">
-	body { background-color: #fff; 
-		font-family: "Trebuchet MS", Verdana, Geneva, Arial, Helvetica, sans-serif;
-	        font-size:small; line-height: 150%;
-
-	}
-	a { text-decoration: none; }
-        a:hover {text-decoration: underline;}
-	h1 { text-align: center; }
-	code, pre {
-        font-family: "Courier New", Courier, monospace;
-        font-size: small;
-}
-
-	.lcol { 
-		width: 20%; 
-		position: absolute;
-		background-color: #f5f8fc;
-		border: 1px solid #69c;
-		padding: 1px 1ex;
-	}
-	.rcol { 
-		width: 75%; 
-		color: #000;
-	        line-height: 150%;
-		margin: 0 0 0 25%;
-
-	}
-    </style>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <link rel="stylesheet" type="text/css" href="$(ROOT)/style.css" />
   </head>
 <body>
-<div class="lcol">
+<div class="menu">
 <navbar:render name=$(name) select=$(select) nohints>
 </div>
-<div class="rcol">
+<div class="text">
 <h1>{#TITRE#}</h1>
 {#BODY#}
 </div>
