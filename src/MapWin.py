@@ -308,6 +308,8 @@ class mapSubWin:
                 hexName = "unownedSector"
             elif des in ".\\":
                 hexName = "seaSector"
+            elif des == 'X':
+                hexName = "mineSector"
             else:
                 hexName = "unknownSector"
 
@@ -316,7 +318,7 @@ class mapSubWin:
                 des = des + sdes
 
             # draw hex around sector
-            self.drawItem(x, y, hexName, "Sector", tags='SECTOR')
+            self.Map.lower(self.drawItem(x, y, hexName, "Sector", tags='SECTOR'))
             # Draw text description
             self.drawItem(x, y, hexName+"Text", "SectorText",
                           tags='SECTOR', text=des)
