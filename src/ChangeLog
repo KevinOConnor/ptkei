@@ -1,3 +1,19 @@
+2003-03-18  Laurent Martin  <laurent@lfmm.org>
+
+	* empCmd(CmdEMove.receive): Modified the selector of destination
+	sectors that assumed that ownership of foreign sectors was a known
+	value. 
+
+	* MyText: Definition of a new class based upon Tkinter.Text to
+	replace it.  MyText supports copy even when you're not allowed to
+	modify the text.
+
+	* OutWin, empTk, TeleWin: Replacement of all occurences of
+	Tkinter.Text by MyText.MyText.
+
+	* empTk(mainWin.tranferKeys): The MyText class doesn't send
+	keystrokes back to the main window.
+	
 2003-03-14  Laurent Martin  <laurent@lfmm.org>
 
 	* empCmd(CmdLTest): Added a new command: ltest.  It works like the
