@@ -328,18 +328,39 @@ def selectToExpr(dbname, range, cond):
         try: val = empDb.megaDB['realm'][rm]
         except KeyError:
             raise error, "Realm not in database."
-        conditions = map(operator.add, ("xl>=", "xl<=", "yl>=", "yl<="),
-                         map(str, val))
+        minX, maxX, minY, maxY = val
+        if minX < maxX: 
+            conditions = map(operator.add, ("xl>=", "xl<="),
+                             map(str, (minX, maxX)))
+        elif minX > maxX:
+            conditions = ["(xl >= %d or xl <= %d)" % (minX, maxX)]
+        else:
+            conditions = ["xl==%d" % (minX)]
+        if minY < maxY: 
+            conditions = conditions + map(operator.add, ("yl>=", "yl<="),
+                                          map(str, (minY, maxY)))
+        elif minY > maxY:
+            conditions.append("(yl >= %d or yl <= %d)" % (minY, maxY))
+        else:
+            conditions.append("yl==%d" % (minY))
     elif mc.group('minX'):
         # Range
         if mc.group('maxX'):
-            conditions = map(operator.add, ("xl>=", "xl<="),
-                             mc.group('minX', 'maxX'))
+            minX, maxX = map(int, mc.group('minX', 'maxX'))
+            if minX < maxX: 
+                conditions = map(operator.add, ("xl>=", "xl<="),
+                                 mc.group('minX', 'maxX'))
+            elif minX > maxX:
+                conditions = ["(xl >= %s or xl <= %s)" % mc.group('minX', 'maxX')]
         else:
             conditions = ["xl==" + mc.group('minX')]
         if mc.group('maxY'):
-            conditions[len(conditions):] = map(operator.add, ("yl>=", "yl<="),
-                                               mc.group('minY', 'maxY'))
+            minY, maxY = map(int, mc.group('minY', 'maxY'))
+            if minY < maxY: 
+                conditions = conditions + map(operator.add, ("yl>=", "yl<="),
+                                 mc.group('minY', 'maxY'))
+            elif minY > maxY:
+                conditions.append("(yl >= %s or yl <= %s)" % mc.group('minY', 'maxY'))
         else:
             conditions.append("yl==" + mc.group('minY'))
     elif mc.group('cirX'):
