@@ -513,20 +513,6 @@ class EmpTime:
 ###########################################################################
 #############################  Useful functions ###########################
 
-# Check for broken int function.
-try:
-    int('-')
-except ValueError:
-    # Working atoi
-    fixedAtoI = int
-else:
-    # Broken atoi
-    def fixedAtoI(s):
-        """Fixed int with +/- checking."""
-        if s == '+' or s == '-':
-            raise ValueError
-        return int(s)
-
 #######  Tools for working with sectors.
 #######
 
