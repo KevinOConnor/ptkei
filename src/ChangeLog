@@ -1,3 +1,8 @@
+2003-06-12  Laurent Martin  <laurent@lfmm.org>
+
+	* empParse.py(ParseSpyPlane.data): Fixed the handling of
+	reconnaissance flight performed by non spy planes.
+
 2003-06-10  Laurent Martin  <laurent@lfmm.org>
 
 	* empCmd.py(CmdRefresh): Added a neededDump string in CmdRefresh
