@@ -61,14 +61,14 @@ import empParse
 # classes essentially manage output from the server.  They strip the
 # low-level empire protocol stuff from the information and transmit the
 # data using a variety of classes and methods.  The classes AsyncHandler,
-# LoginHandler, NormalHandler, and DummyHandler, are these "data managers".
-# It is important to note that AsyncHandler and LoginHandler have special
+# LoginHandler, and NormalHandler, are these "data managers".  It is
+# important to note that AsyncHandler and LoginHandler have special
 # properties.  Both of these classes will normally have exactly one
 # instance associated with them.  These single instances are associated
 # with EmpIOQueue at its instantiation, and are stored in the variables
-# defParse and loginParser.  To the contrary, the NormalHandler and
-# DummyHandler classes will generally have multiple instances associated
-# with them - one instance per queued command.
+# defParse and loginParser.  To the contrary, the NormalHandler class will
+# generally have multiple instances associated with them - one instance per
+# queued command.
 
 
 # The purpose of the chained display classes:
@@ -190,12 +190,12 @@ class EmpIOQueue:
         self.InpBuf = ""
 
         # Storage for the command queue.  Each command is queued by
-        # associating it with a "data manager" class
-        # (NormalHandler/DummyHandler), and placing it in the queue stored
-        # in FuncList.  The integers FLWaitLev and FLSentLev are indexes
-        # into this queue.  FuncList[FLWaitLev] points to the command that
-        # is currently receiving data.  FuncList[FLSentLev] points to the
-        # next command that needs to be sent to the server.
+        # associating it with a "data manager" class (eg, NormalHandler),
+        # and placing it in the queue stored in FuncList.  The integers
+        # FLWaitLev and FLSentLev are indexes into this queue.
+        # FuncList[FLWaitLev] points to the command that is currently
+        # receiving data.  FuncList[FLSentLev] points to the next command
+        # that needs to be sent to the server.
         self.FuncList = []
         self.FLWaitLev = self.FLSentLev = 0
 
@@ -226,21 +226,18 @@ class EmpIOQueue:
         except UnicodeError, e:
 	    viewer.Error("Socket write error: " + str(e))
             self.socket.send("\n")
-##      def debug(*args):
-##  	pass
-
-##      # To enable debuging, change this function to debug and alter the above
-##      # definition.
-##      def debugcc(self, msg, type=None):
-
-##  	if type == 'send':
-##  	    print "## %s" % msg
-##  	elif type == 'get':
-##  	    print "-- %s" % msg
-##  	else:
-##  	    print "%-30s @ len:%-2d wait:%-2d sent:%-2d flags:%-2d" % (
-##  		msg, len(self.FuncList), self.FLWaitLev,
-##  		self.FLSentLev, self.flags)
+    def debug(*args):
+        pass
+    # To enable debugging, rename this function to debug.
+    def debugXX(self, msg, type=None):
+        if type == 'send':
+            print "## %s" % msg
+        elif type == 'get':
+            print "-- %s" % msg
+        else:
+            print "%-30s @ len:%-2d wait:%-2d sent:%-2d flags:%-2d" % (
+                msg, len(self.FuncList), self.FLWaitLev,
+                self.FLSentLev, self.flags)
 
     def doFlags(self):
         """Set the queue flags depending on the current state of the queue."""
@@ -469,7 +466,7 @@ class EmpIOQueue:
             while cache:
                 data = cache[0]
                 del cache[0]
-##  		self.debug(data, 'get')
+##                 self.debug(data, 'get')
 
                 if not self__FuncList:
                     # Asynchronous line of data
@@ -866,7 +863,6 @@ class NormalHandler:
 
     def handleFlush(self, response):
         """Chained viewer class callback: Respond to a prompt."""
-        eq = empQueue
         if not self.atSubPrompt:
             # Ughh.  No longer at the subprompt.
             viewer.Error("Sync error: Can not send sub-prompt.")
@@ -874,47 +870,6 @@ class NormalHandler:
         empQueue.SendNow(response)
         self.atSubPrompt = 0
         self.out.Answer(response)
-
-class DummyHandler:
-    """Dummy class - useful as a place marker.
-
-    This class does not handle input/output; it is placed within the queue
-    to note a specific location.  When this class' start() method is
-    invoked, it generally triggers a client smart command.
-    """
-    def __init__(self, command, disp, mcallback, tcallback, post=QU_BURST):
-        self.command = None
-        self.out = disp
-        self.id = command
-        self.mainCallback = mcallback
-        self.transmitCallback = tcallback
-
-        if mcallback is None:
-            # Override default start method
-            self.start = doNothing
-
-        if tcallback is None:
-            # Override default sending method
-            self.sending = None
-
-        # preFlags is used to determine when a command is to be sent.
-        # Since dummy commands don't send anything, it does not make sense
-        # to use a value other than QU_BURST.
-        self.preFlags = QU_BURST
-        # postFlags should be either QU_BURST, or QU_FULLSYNC.  (Since
-        # there is no actual command, it doesn't make sense to use
-        # QU_SYNC.)
-        self.postFlags = post
-
-    def start(self):
-        """EmpIOQueue Handler: Previous command completed; start this one."""
-        self.out.Begin(self.id)
-        self.mainCallback()
-        self.out.End(self.id)
-
-    def sending(self):
-        """EmpIOQueue Handler: Command about to be sent."""
-        self.transmitCallback(empQueue.FLSentLev)
 
 def flashException():
     """Send an exception message directly to the display.
