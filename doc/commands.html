@@ -27,7 +27,8 @@
 	      
 	      <li><a href="#execute">execute</a> - Send the content of a
 		  file to the empire server.
-	      
+	      <li><a href="#ltest">ltest</a> - Compute the mobility
+		needed to move a land unit. 
 	      <li><a href="#null">null</a> - Run command with no output
 
 	      
@@ -423,6 +424,23 @@ Sector 6,2 is ok.
 
     <p>Sector 7,-1 (an airport) needs 59 more lcms and 5 more mils to
     make all the planes located there 100%. </p>
+
+    <h3><a name="ltest">Command ltest</a></h3>
+
+    <h4>Syntax</h4>
+
+    <pre>ltest &lt;unit ID&gt; &lt;sector&gt;</pre>
+
+    <h4>Description</h4>
+
+    <p>The <strong>ltest</strong> command behaves just like the
+    <strong>test</strong> except that it applies to a land unit as
+    shown in the example: </p>
+
+    <pre>[133:630] Command : ltest 329 -5,-5 
+Looking for best path to -5,-5
+Using best path 'yyyyygy', movement cost 1.601
+Total movement cost cost: 80, new mob: 47</pre>
 
     <h2>Tk Window Commands</h2>
 
