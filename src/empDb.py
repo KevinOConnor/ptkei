@@ -620,7 +620,7 @@ class DatabaseSaver:
             'planetype' : {},
             'shiptype' : {},
             'landtype' : {},
-            'login': {'host':"blitz.empire.cx", 'port':6789,
+            'login': {'host':"blitz.wolfpackempire.com", 'port':6789,
                       'coun':"visitor", 'repr':"visitor"},
             'version': {
                 'worldsize':(255,255), 'maxCountries':255, 'ETUSeconds':1024,
