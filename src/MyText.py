@@ -40,6 +40,7 @@ class MyText(Tkinter.Text):
         self.bind("<Key-Left>", self.arrowbinding)
         self.bind("<Key-Right>", self.arrowbinding)
         self.bind("<ButtonRelease>", self.insertbinding)
+        self.bind("<Button-2>", self.mousebinding)
 
         # Easy place to put this - not _editable-related, but common
         # to all text selfs.
@@ -58,6 +59,17 @@ class MyText(Tkinter.Text):
         self.shift = 1
     def shiftup(self, ev):
         self.shift = 0
+
+    def mousebinding(self, ev):
+        print 'entering mousebinding'
+        if self.editable:
+            return None
+        else:
+            if self.next:
+                self.next.focus_set()
+                self.next.insert('insert', self.selection_get())
+            return "break"
+
 
     def keybinding(self, ev):
         """ This method binds all keys, and causes them to be
