@@ -58,15 +58,23 @@ import traceback
 
 
 ###########################################################################
-############################ Python 1.5 Check  ############################
+############################ Python 1.5.2 Check ###########################
 
 try:
     test = r"Test for 'r' string flag."
     del test
+
+    try:
+        # Python 1.5.1 and earlier returned 0 for atoi('-')...
+        string.atoi('-')
+    except ValueError:
+        pass
+    else:
+        raise "outdated.."
 except:
     print """
 
-It appears this version of Python is out-dated.  You must have Python 1.5
+It appears this version of Python is out-dated.  You must have Python 1.5.2
 or later installed in order for the client to work.  See the web site at:
 http://www.python.org/ for more information on upgrading Python.
 
