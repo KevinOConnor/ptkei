@@ -2,6 +2,18 @@
 
 <titre>What's new?</titre>
 
+
+<h3>Notes for version 1.18.0</h3>
+<ul>
+<li>Added support for @x,y:d sector ranges.</li>
+<li>Fixed support for square ranges that cross the map (e.g. 20:-10). </li>
+<li>Copy from read-only text areas is now possible. </li>
+<li>Added a command usage string that gets printed when the user enters a
+malformed ptkei command.</li>
+<li>Added a ltest command that displays mobility usage of a land unit. </li>
+</ul>
+
+
 <h3>Notes for version 1.17.1</h3>
 
 <ul>
