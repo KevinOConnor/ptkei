@@ -847,8 +847,8 @@ class ParseUnits(empQueue.baseDisp):
                 del self.coord
                 self.Map = []
                 self.num = None
-            if len(msg) == 0:
-                s = " "*len(self.Map[0])
+            if len(msg) == 0 and self.num is not None:
+                s = " "*(self.num*2-1)
                 while len(self.Map) < self.num:
                     self.Map.append(s)
                 parseStarMap(self.Map, self.coord, 'radar')
