@@ -200,9 +200,6 @@ class mainWin:
 ##  	self.Output.pack(side='left', anchor='se',
 ##  			 expand=1, fill='both')
         scrollY['command'] = self.Output.yview
-        self.Output.bind('<Button-2>',
-                         (lambda e, s=self.Output:
-                          s.focus_get().insert('insert', s.selection_get())))
         self.Output.bind('<Button-3>', self.DoLocateSector)
         self.Output.bind('<Configure>', (lambda e, s=self.Output:
                                          s.see('end')))
