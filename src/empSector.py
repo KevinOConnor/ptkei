@@ -263,7 +263,8 @@ def eff_new( sect ) :
 
 
 def eff_work_new( sect, work ) :
-    """ new efficiency and remaining available work of 'work' """
+    """ new efficiency and remaining available work of 'work' and new
+    type of the sector """ 
     eff = value( sect, 'eff' )
     work = int(work)
     bwork = work / 2
