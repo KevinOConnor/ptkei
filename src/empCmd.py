@@ -659,18 +659,25 @@ class CmdRefresh(baseCommand):
         self.dumpList = match.group('flags') or "elspo"
         self.persistent = (match.group('pre') != None)
         self.totalDump = (match.group('total') != None)
+        self.neededDump = ""
 
     def checkPending(self, qElem):
         """empQueue scan callback: Don't send redundant commands."""
+        if qElem.sendRefresh is not None:
+            for i in qElem.sendRefresh:
+                if i not in self.neededDump:
+                    self.neededDump = self.neededDump + i
+            return 0
         if qElem.__class__ is self.__class__:
             # Found a refresh command pending - don't send any repeated dumps
             for i in qElem.dumpList:
                 pos = string.find(self.dumpList, i)
-                if pos != -1:
+                if pos != -1 and string.find(self.neededDump, i) == -1:
                     self.dumpList = self.dumpList[:pos] + self.dumpList[pos+1:]
                     if not self.dumpList:
                         # No dump commands left - end scan
                         return 1
+        return 0
 
     def sending(self):
         # Ughh.
