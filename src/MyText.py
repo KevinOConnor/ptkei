@@ -21,7 +21,7 @@ class MyText(Tkinter.Text):
             del kw['next']
         else:
             self.next = None
-        Tkinter.Text.__init__(self, *args, **kw)
+        apply(Tkinter.Text.__init__, (self,) + args, kw)
         self.ctl = 0
         self.alt = 0
         self.shift = 0
