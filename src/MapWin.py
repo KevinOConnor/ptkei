@@ -297,7 +297,7 @@ class mapSubWin:
                     hexName = "ownedSector"
                 if oldown is not None and oldown != own:
                     oldownName="oldownerEnemy"
-            elif own == CN_ENEMY or own > 0:
+            elif own is not None and (own == CN_ENEMY or own > 0):
                 hexName = "enemySector"
                 if oldown is not None and oldown != own:
                         if oldown == CN_OWNED:
