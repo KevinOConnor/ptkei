@@ -336,6 +336,8 @@ class baseCommand:
                 called.
     commandFormat - if defined, it must be a regular expression that
                 specifies the parameters for the command.
+    commandUsage - a text string to print should the above regular
+                expression fail to match.
 
     The following class attributes are not used by this base-class, but are
     used by EmpParse when the command is 'registered':
@@ -358,6 +360,7 @@ class baseCommand:
     sendRefresh = None
     invoke = receive = transmit = None
     commandFormat = None
+    commandUsage = None
 
     def __init__(self, ioq, match, disp):
         # Establish defaults for all the standard command class commands.
@@ -372,8 +375,11 @@ class baseCommand:
                 args = ""
             self.parameterMatch = self.commandFormat.match(args)
             if not self.parameterMatch:
-                viewer.Error("Invalid parameters.  Form should be: %s"
-                             % self.commandFormat.pattern)
+                form = self.commandUsage
+                if form is None:
+                    form = self.commandFormat.pattern
+                viewer.Error("Invalid parameters.  Form should be:\n%s"
+                             % form)
                 return
         # Call invoke method immediately
         if self.invoke is not None:
@@ -421,6 +427,7 @@ class CmdAlias(baseCommand):
 
     EAliasFormat = re.compile(r"\$(\$|\*|\d+)")
 
+    commandUsage = "alias <name> <command>"
     commandFormat = re.compile(
         r"^(?P<newName>\S+)\s+(?P<value>.*?)\s*$")
     def invoke(self):
@@ -586,6 +593,7 @@ class CmdMover(baseCommand):
     sendRefresh = "e"
     defaultBinding = (('Mover', 5),)
 
+    commandUsage = "Mover <commodity> <quantity> <sector> <sector> [<sector> ...]"
     commandFormat = re.compile(
         r"^(?P<comd>\S+)\s+(?P<val>[+-@]?\d+)\s+(?P<sectors>.*)$")
     def receive(self):
@@ -699,6 +707,7 @@ class CmdEval(baseCommand):
     defaultPreList = 1
     defaultBinding = (('eval', 4),)
 
+    commandUsage = "eval {<sector>|'nation'|'version'} <command>"
     commandFormat = re.compile(
         r"^(?P<type>"+empParse.s_sector+"|nation|version)\s+"+s_command+"$")
     def receive(self):
@@ -730,6 +739,7 @@ class CmdForEach(baseCommand):
     defaultPreList = 1
     defaultBinding = (('foreach', 7),)
 
+    commandUsage = "foreach <sectors> [?<selectors>] <command>"
     commandFormat = re.compile(
         r"^(?P<sectors>\S+)\s+(?:\?(?P<selectors>\S+)\s+)?"
         +s_command+"$")
@@ -786,6 +796,8 @@ class CmdMMove(baseCommand):
     sendRefresh = "e"
     defaultBinding = (('mmove', 5),)
 
+    commandUsage = ("mmove <commodity> <src sectors> <min level>"
+                    " <min mob> <dst sectors> <max level>")
     commandFormat = re.compile(
         "^"+empParse.s_comm+"\s+"
         r"(?P<sectors>\S+)(?:\s+\?(?P<selectors>\S+))?\s+"
@@ -857,6 +869,8 @@ class CmdEMove(baseCommand):
     sendRefresh = "e"
     defaultBinding = (('emove', 5),)
 
+    commandUsage = ("emove {civ|mil} <source sectors> <min level>"
+                    " <min mobility> <dest sectors>")
     commandFormat = re.compile(
         "^"+empParse.s_comm+"\s+"
         r"(?P<sectors>\S+)(?:\s+\?(?P<selectors>\S+))?\s+"
@@ -928,6 +942,7 @@ class CmdNova(baseCommand):
     sendRefresh = "e"
     defaultBinding = (('nova', 4),)
 
+    commandUsage = "nova {civ|mil} <from sector> [<to sector>]"
     commandFormat = re.compile(
         "^"+empParse.s_comm+"\s+"+empParse.s_sector
         +"\s*(?:"+empParse.s_sector2+")?\s*$")
@@ -1288,6 +1303,7 @@ class CmdRemove(baseCommand):
     defaultPreList = 1
     defaultBinding = (("remove", -3),)
 
+    commandUsage = "remove {s|l|p} <sectors> [<selectors>]"
     commandFormat = re.compile(
         r"^(?P<type>[slp])\s+(?P<sectors>\S+)(?:\s+\?(?P<selectors>\S+))?\s*$|^$")
     
@@ -1447,6 +1463,8 @@ class CmdDmove(baseCommand):
     sendRefresh = "e"
     defaultBinding = (('dmove', 5),)
 
+    commandUsage = ("dmove <commodity> <src sectors> <min mob> "
+                    "[zero] [<dst sectors>]")
     commandFormat = re.compile(
         "^"+empParse.s_comm+"\s+"
         r"(?P<sectors>\S+)(?:\s+\?(?P<selectors>\S+))?\s+"
@@ -1530,6 +1548,7 @@ class CmdSetFood(baseCommand):
     defaultPrelist = 1
     defaultBinding = (("setfood", 4),)
 
+    commandUsage = "setfood <sectors> [no] [force]"
     commandFormat = re.compile(
         "(?P<sectors>\S+)(?:\s+\?(?P<selectors>\S+))?"
         +r"(?:\s+(?P<local>no))?"
@@ -1580,6 +1599,7 @@ class CmdLTest(baseCommand):
     defaultPreList = 1
     defaultBinding = (("ltest", 5),)
 
+    commandUsage = "ltest <land id> <sector>"
     commandFormat = re.compile("(?P<landId>\d+)\s+"+
                                r"(?P<xLoc>-?\d+),(?P<yLoc>-?\d+)")
 
