@@ -19,8 +19,8 @@
 import string
 import re
 import operator
+import bisect
 
-import empQueue
 import empDb
 
 # Key Ideas:
@@ -36,12 +36,17 @@ import empDb
 
 # How to setup a parser class:
 
-# A parser class is a class that interprets data received from a command.
-# The first thing that needs to be done is to setup a class that descends
-# from empQueue.baseDisp.  The new class should define methods for some,
-# none, or all of Begin(), data(), flush(), and End().  See the base class
-# empQueue.baseDisp for more info on how this works.  Basically, if one of
-# the above methods is not defined, empQueue.baseDisp will create a dummy
+# A parser class is a class that interprets data received from a command in
+# a "chained" (aka stacked) system.  Each parser extracts information and
+# then pushes the data to the next parser in the chain.  To define a new
+# parser, the first thing that needs to be done is to setup a class that
+# descends from 'baseDisp'.  The basic class is called a "display class"
+# because the "chaining" mechanism also allows one to alter the data and/or
+# display it differently (eg, the OutWin.py file has a display class that
+# redirects output to a Tk window).  The new class should define methods
+# for some, none, or all of Begin(), data(), flush(), and End().  See the
+# comments in baseDisp for more info on how this works.  Basically, if one
+# of the above methods is not defined, baseDisp will create a dummy
 # reference that just passes the information to the next parser.  If a
 # method is defined for any of the above, it is the responsibility of the
 # class to pass the data onto the next parser.  This is usually done by
@@ -68,19 +73,58 @@ import empDb
 
 # Binding a command to a parse class:
 
-# There are two ways to bind a command.  The first is to add the parser to
-# list found in standardParsers (which is defined below in initialize()).
-# This defines a low-level parser that will be called every time the
-# command is sent to the server.  The second method is to assign the parser
-# on a per-command basis.  This is done by specifying the parse class when
-# invoking viewer.ioq.Send().  (See empCmd.EmpParse for more info on this
-# command.)  To assign a parser to a specific command use
-# viewer.ioq.Send("cmd_text_here", ParseClassHere()).  When "cmd_text_here"
-# is sent to the server, ParseClassHere will receive the output from it.
-# Note: binding a class on a per-command basis does not override a
-# low-level parser.  If the command is also associated with a low-level
-# parser, then the binded class will receive the data after the low-level
+# To associate a parser with a server command add a special 'attach'
+# attribute to the class, and then add the name of the class to the list
+# found in the initialize() method at the end of this file.  The attach
+# attribute should be a list of 2-tuples, each corresponding to the command
+# to bind to.  (A single parser may be bound to multiple commands.)  The
+# first item of the 2-tuple is the name of the command to bind to, and the
+# second argument is the minimum number of characters that must match.
+# (For example, ("move", 3) would match "move" and "mov".)  As a special
+# hack, one may use a negative length to match any command where the stem
+# matches.  (For example, ("move", -3) would match "move", "mov", "movers",
+# "movexxx", etc.)
+#
+# It is also possible to bind a parser class to a specific smart command
+# during the viewer.ioq.Send() phase, but this is uncommon.  (See
+# empCmd.EmpParse for more info on this command.)  To assign a parser to a
+# specific command use viewer.ioq.Send("cmd_text_here", ParseClassHere()).
+# When "cmd_text_here" is sent to the server, ParseClassHere will receive
+# the output from it.  Note: binding a class on a per-command basis does
+# not override a default parser (specified using the attach mechanism
+# described above).  If the command is also associated with a default
+# parser, then the bound class will receive the data after the default
 # parser.
+
+###########################################################################
+#############################   Base class    #############################
+class baseDisp:
+    """Base class for chained parsing classes.  (Does little by itself.)
+
+    Basically, this class just insures that all the sub-classes support the
+    standard chained display class protocols:
+
+    Begin() - notes the beginning of a command.
+    data() - notes a line of data.
+    flush() - notes a sub-prompt.
+    Answer() - notes the response to a sub-prompt.
+    End() - notes the termination of a command.
+    Process() - notes a lull in server output.
+
+    This class also defines self.out - a handy reference to the next parser
+    in the display chain.
+
+    Note: Because the global viewer class is generally at the top of the
+    chain, it must support all of the above methods.  (But because this
+    class is used for chaining, the global viewer is not an ancestor of
+    this class.)
+    """
+    def __init__(self, disp):
+        # Establish defaults for all the standard display class commands.
+        self.out = disp
+        for i in ('Begin', 'data', 'flush', 'Answer', 'End', 'Process'):
+            if not hasattr(self, i):
+                setattr(self, i, getattr(disp, i))
 
 
 CN_OWNED = empDb.CN_OWNED
@@ -490,7 +534,7 @@ atoi = string.atoi
 curtimeFormat = re.compile("^"+s_time+"$")
 
 
-class ParseDump(empQueue.baseDisp):
+class ParseDump(baseDisp):
     """Parse output from dump command."""
     attach = (('dump', -2), ('pdump', -2), ('ldump', -2),
               ('sdump', -2), ('ndump', -2), ('lost', 3))
@@ -661,7 +705,7 @@ class ParseDump(empQueue.baseDisp):
         if self.sett:
             self.DB.timestamp = self.timestamp
 
-class ParseMap(empQueue.baseDisp):
+class ParseMap(baseDisp):
     """Parse output from various map commands."""
     attach = (('map', -3), ('nmap', -2), ('bmap', -2))
     altersDB = ""
@@ -734,11 +778,12 @@ ss_sect = r"-?\d+"
 s_sector = r"(?P<sectorX>"+ss_sect+"),(?P<sectorY>"+ss_sect+")"
 s_sector2 = r"(?P<sector2X>"+ss_sect+"),(?P<sector2Y>"+ss_sect+")"
 s_comm = r"(?P<comm>\S+)"
-class ParseMove(empQueue.baseDisp):
+class ParseMove(baseDisp):
     """Parse an explore prompt."""
     attach = (('explore', -3), ('move', -3), ('transport', -4), ('test', -3))
     # XXX - test doesn't alter the database
     def Begin(self, cmd):
+        self.out.Begin(cmd)
         self.map = []
 
     ownSector = re.compile("^Sector "+s_sector+" is now yours\.$")
@@ -772,7 +817,7 @@ s_counName = r"(?P<counName>.*?)"
 s_counId = r"\(#(?P<counId>\d+)\)"
 s_counIdent = s_counName + " " + s_counId
 s_eff = r"(?P<eff>\d+)%"
-class ParseUnits(empQueue.baseDisp):
+class ParseUnits(baseDisp):
     """Parse info from a variety of unit type commands."""
     attach = (
         ('radar', -3), ('lradar', -4), ('lookout', -3),
@@ -960,7 +1005,7 @@ class ParseUnits(empQueue.baseDisp):
 look_info = re.compile(r"^(?:Your|"+s_counIdent+") "+ParseUnits.s_shipOrSector
                        +" @ "+s_sector+"$")
 
-class ParseSimpleTime(empQueue.baseDisp):
+class ParseSimpleTime(baseDisp):
     """Simple class that will extract the time from the first line."""
     attach = (
         ('census', -2), ('resource', -4), ('cutoff', -2),
@@ -981,7 +1026,7 @@ class ParseSimpleTime(empQueue.baseDisp):
             self.done = 1
         self.out.data(msg)
 
-class ParseSpy(empQueue.baseDisp):
+class ParseSpy(baseDisp):
     """Handle spy reports."""
     attach = (('spy', -2),)
     altersDB = "e"
@@ -997,6 +1042,7 @@ class ParseSpy(empQueue.baseDisp):
         }
 
     def Begin(self, cmd):
+        self.out.Begin(cmd)
         self.pos = 0
         self.changes = []
 
@@ -1047,7 +1093,7 @@ class ParseSpy(empQueue.baseDisp):
         self.out.End(cmd)
         empDb.megaDB['SECTOR'].updates(self.changes)
 
-class ParseAttack(empQueue.baseDisp):
+class ParseAttack(baseDisp):
     attach = (('attack', -2), ('assault', -2))
     # 8,0 is a 100% AUJ highway with approximately 150 military.
     # 21 of your troops now occupy -10,12
@@ -1097,7 +1143,7 @@ class ParseAttack(empQueue.baseDisp):
             empDb.megaDB['SECTOR'].updates([{
                 'x': x, 'y': y, 'owner':CN_OWNED, 'mil': mil}])
 
-class ParseCoastWatch(empQueue.baseDisp):
+class ParseCoastWatch(baseDisp):
     """Handle the coastwatch command."""
     attach = (('coastwatch', 3),)
     altersDB = ""
@@ -1108,7 +1154,7 @@ class ParseCoastWatch(empQueue.baseDisp):
         self.out.data(msg)
         getLookInfo(msg, 'SHIP')
 
-class ParseSate(empQueue.baseDisp):
+class ParseSate(baseDisp):
     attach = (('satellite', -3),)
     altersDB = ""
     def Begin(self, cmd):
@@ -1209,7 +1255,7 @@ class ParseSate(empQueue.baseDisp):
                 val['eff'] = string.atoi(item[-1][:-1])
                 empDb.megaDB['LAND UNITS'].updates([val])
 
-class ParseBuild(empQueue.baseDisp):
+class ParseBuild(baseDisp):
     """Parse build command."""
     attach = (('build', -3),)
     buildItems = re.compile(r"^(?:Bridge span built over|"
@@ -1246,7 +1292,7 @@ class ParseBuild(empQueue.baseDisp):
                 empDb.megaDB['SECTOR'].updates(
                     [{'owner':0, 'x': x, 'y': y, 'des':des}])
 
-class ParseCapital(empQueue.baseDisp):
+class ParseCapital(baseDisp):
     """Parse output from capital command."""
     attach = (('capital', -3),)
     altersDB = ""
@@ -1262,7 +1308,7 @@ class ParseCapital(empQueue.baseDisp):
                 loc = tuple(map(string.atoi, mm.group('sector2X', 'sector2Y')))
             checkUpdated('nation', 'capital', loc)
 
-class ParseReport(empQueue.baseDisp):
+class ParseReport(baseDisp):
     """Parse output from report command."""
     attach = (('report', -4),)
     altersDB = ""
@@ -1280,7 +1326,7 @@ class ParseReport(empQueue.baseDisp):
         else:
             empDb.megaDB['countries'].resolveNameId(line[1], id)
 
-class ParseRelations(empQueue.baseDisp):
+class ParseRelations(baseDisp):
     """Parse output from relations."""
     attach = (('relations', -3),)
     altersDB = ""
@@ -1298,7 +1344,7 @@ class ParseRelations(empQueue.baseDisp):
             empDb.megaDB['countries'].resolveNameId(mm.group('counName'),
                 string.atoi(mm.group('counId')))
 
-class ParseRealm(empQueue.baseDisp):
+class ParseRealm(baseDisp):
     """Parse output from realm command."""
     attach = (('realm', -4),)
     altersDB = ""
@@ -1315,7 +1361,7 @@ class ParseRealm(empQueue.baseDisp):
             vals = vals[1:]
             checkUpdated('realm', realm, vals)
 
-class ParseTele(empQueue.baseDisp):
+class ParseTele(baseDisp):
     """Parse outgoing telegrams for future reference."""
     attach = (('telegram', -3),)
     altersDB = ""
@@ -1367,7 +1413,7 @@ class ParseTele(empQueue.baseDisp):
             except KeyError:
                 empDb.updateDB['telegrams']['list'] = [msg]
 
-class ParseRead(empQueue.baseDisp):
+class ParseRead(baseDisp):
     """Parse and store telegrams and announcements.
 
     This parser is responsible for making a copy of all correspondence that
@@ -1449,7 +1495,7 @@ class ParseRead(empQueue.baseDisp):
 
 ss_flt = r"\d+(?:\.\d+)?"
 
-class ParseVersion(empQueue.baseDisp):
+class ParseVersion(baseDisp):
     """Parse the version info."""
     attach = (('version', 1),)
     altersDB = ""
@@ -1642,7 +1688,7 @@ class ParseVersion(empQueue.baseDisp):
             self.opts = []
             self.pos = 2
 
-class ParseNation(empQueue.baseDisp):
+class ParseNation(baseDisp):
     """Parse nation command."""
     attach = (('nation', 3),)
     altersDB = ""
@@ -1722,7 +1768,7 @@ class ParseNation(empQueue.baseDisp):
         elif nhap is not None:
             checkUpdated('nation', 'happyNeeded', string.atof(nhap))
 
-class ParseUpdate(empQueue.baseDisp):
+class ParseUpdate(baseDisp):
     """Parser for the update command.
 
     Grab info that will allow the client to calculate when the next update
@@ -1745,7 +1791,7 @@ class ParseUpdate(empQueue.baseDisp):
         else:
             empDb.megaDB['time'].noteTime(mm)
 
-class ParseSpyPlane(empQueue.baseDisp):
+class ParseSpyPlane(baseDisp):
     """Handle spy plane reports."""
     attach = (('recon', -3),)
     # Translations from header names to dump names:
@@ -1758,6 +1804,7 @@ class ParseSpyPlane(empQueue.baseDisp):
         }
 
     def Begin(self, cmd):
+        self.out.Begin(cmd)
         self.mode = 0
         self.sect_changes = []
         self.ship_changes = []
@@ -1847,7 +1894,7 @@ class ParseSpyPlane(empQueue.baseDisp):
         empDb.megaDB['LAND UNITS'].updates(self.land_changes)
         empDb.megaDB['SECTOR'].updates(self.sect_changes)
 
-class ParseFire(empQueue.baseDisp):
+class ParseFire(baseDisp):
     """Handle the fire command to find sunk ships."""
     attach = (('bomb', -3), ('fire', -3), ('torpedo', -3))
     ##   ms   minesweeper (#223) sunk!
@@ -1860,7 +1907,7 @@ class ParseFire(empQueue.baseDisp):
             empDb.megaDB['SHIPS'].updates([
                 {'id': id, 'owner': CN_UNOWNED}])
 
-class ParseShow(empQueue.baseDisp):
+class ParseShow(baseDisp):
     attach = (('show', -4),)
     altersDB = ""
     def Begin(self,cmd):
@@ -2046,17 +2093,9 @@ class ParseShow(empQueue.baseDisp):
 ###########################################################################
 #############################  Parser list    #############################
 
-DB_SECTOR = 1
-DB_LAND = 2
-DB_SHIP = 4
-DB_PLANE = 8
-DB_NUKE = 16
-DB_LOST = 32
-
-DB_ALL = DB_SECTOR|DB_LAND|DB_SHIP|DB_PLANE|DB_NUKE|DB_LOST
+StandardParsers = []
 
 def initialize():
-    standardParsers = []
     for cls in (
         ParseRead, ParseTele, ParseDump, ParseMap, ParseRealm,
         ParseMove, ParseVersion, ParseUpdate, ParseNation, ParseCapital,
@@ -2065,14 +2104,34 @@ def initialize():
         ParseSate, ParseFire, ParseShow,
         ):
         for binding in cls.attach:
-            standardParsers.append(binding + (cls,))
-    standardParsers.sort()
-    empQueue.standardParsers = standardParsers
+            StandardParsers.append(binding + (cls,))
+    StandardParsers.sort()
 
 initialize()
 
+ParseDefault = ParseSimpleTime # XXX
+
+def lookupParser(cmd):
+    """Return the default parser for a command."""
+    parser = findCmd(StandardParsers, cmd)
+    if parser:
+        return parser
+    return ParseDefault
+
 ###########################################################################
 #############################  Functions      #############################
+
+def findCmd(lst, cmd):
+    """Search a 2-tuple (name, len) command list for a given CMD."""
+    l = len(cmd)
+    pos = bisect.bisect(lst, (cmd, 0))
+    if (pos < len(lst) and lst[pos][0][:l] == cmd
+        and abs(lst[pos][1]) <= l):
+        return lst[pos][2]
+    if pos > 0:
+        prev = lst[pos-1]
+        if prev[0] == cmd[:len(prev[0])] and prev[1] < 0:
+            return lst[pos-1][2]
 
 def str2Coords(s):
     idx = string.index(s, ',')

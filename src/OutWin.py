@@ -21,15 +21,16 @@ import string
 import re
 
 import MyText
+import empParse
 import empQueue
 import empCmd
 
 ###########################################################################
 #############################  Simple window  #############################
-class SimpDisp(empQueue.baseDisp):
+class SimpDisp(empParse.baseDisp):
     """Display command output in its own window."""
     def __init__(self, disp, title = "Empire output", width=None):
-        empQueue.baseDisp.__init__(self, disp)
+        empParse.baseDisp.__init__(self, disp)
 
         # Create root window
         self.Root = Tkinter.Toplevel(class_="Output")

@@ -23,9 +23,9 @@ import select
 import string
 import re
 import traceback
-import bisect
 
 import empDb
+import empParse
 
 # Key Ideas:
 
@@ -798,9 +798,11 @@ class NormalHandler:
         # Check for lowlevel parsers
         lst = string.split(self.command)
         if lst:
-            parser = findCmd(standardParsers, lst[0])
-            if parser:
-                self.out = parser(self.out)
+            cmd = lst[0]
+        else:
+            cmd = ""
+        parser = empParse.lookupParser(cmd)
+        self.out = parser(self.out)
         self.out.Begin(self.command)
 
     def line(self, line):
@@ -927,55 +929,12 @@ def doNothing(*args, **kw):
     """Do absolutely nothing.  (Used as a dummy function.)"""
     pass
 
-class baseDisp:
-    """Base class for the chained display classes.  (Does little by itself.)
-
-    Basically, this class just insures that all the sub-classes support the
-    standard chained display class protocols:
-
-    Begin() - notes the beginning of a command.
-    data() - notes a line of data.
-    flush() - notes a sub-prompt.
-    Answer() - notes the response to a sub-prompt.
-    End() - notes the termination of a command.
-    Process() - notes a lull in server output.
-
-    This class also defines self.out - a handy reference to the next parser
-    in the display chain.
-
-    Note: Because the global viewer class is generally at the top of the
-    chain, it must support all of the above methods.  (But because this
-    class is used for chaining, the global viewer is not an ancestor of
-    this class.)
-    """
-    def __init__(self, disp):
-        # Establish defaults for all the standard display class commands.
-        self.out = disp
-        for i in ('Begin', 'data', 'flush', 'Answer', 'End', 'Process'):
-            if not hasattr(self, i):
-                setattr(self, i, getattr(disp, i))
-
 def EmpData(username):
     """Initialize EmpIOQueue with default values."""
     return EmpIOQueue(AsyncHandler(),
                       LoginHandler(viewer.loginCallback, username))
 
-def findCmd(lst, cmd):
-    """Search command list for a given CMD."""
-    l = len(cmd)
-    pos = bisect.bisect(lst, (cmd, 0))
-    if (pos < len(lst) and lst[pos][0][:l] == cmd
-        and abs(lst[pos][1]) <= l):
-        return lst[pos][2]
-    if pos > 0:
-        prev = lst[pos-1]
-        if prev[0] == cmd[:len(prev[0])] and prev[1] < 0:
-            return lst[pos-1][2]
-
 # Hack!  There is a function pathPrefix that is not defined in this module,
 # but is setup for this module in empire.py.  See the line
 # "empQueue.pathPrefix = pathPrefix" in the initialize function of
 # empire.py.
-
-# Hack 2!  The global parser list standardParsers is available from this
-# module; however, it is really defined in empParse.py.

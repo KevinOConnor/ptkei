@@ -222,7 +222,7 @@ class EmpParse:
             if mm:
                 arg0 = mm.group('command')
                 # Check pre-syntax list
-                f = empQueue.findCmd(self.preList, arg0)
+                f = empParse.findCmd(self.preList, arg0)
                 if f is not None:
                     f(self, mm, disp)
                     return
@@ -233,7 +233,7 @@ class EmpParse:
                         i[1](test, disp)
                         return
                 # Check post-syntax list
-                f = empQueue.findCmd(self.postList, arg0)
+                f = empParse.findCmd(self.postList, arg0)
                 if f is not None:
                     f(self, mm, disp)
                     return
@@ -529,18 +529,18 @@ class CmdExec(baseCommand):
                 continue
             self.Send(i, self.out)
 
-##     class ReallySilentDisp(empQueue.baseDisp):
+##     class ReallySilentDisp(empParse.baseDisp):
 ## 	"""Display class that discards all input."""
 ## 	Begin = data = Answer = End = empQueue.doNothing
 
-##     class QuietDisp(empQueue.baseDisp):
+##     class QuietDisp(empParse.baseDisp):
 ## 	"""Display class that discards some input."""
 ## 	data = empQueue.doNothing
 
-class SilentDisp(empQueue.baseDisp):
+class SilentDisp(empParse.baseDisp):
     """Display class that discards most input."""
     def __init__(self, disp, name):
-        empQueue.baseDisp.__init__(self, disp)
+        empParse.baseDisp.__init__(self, disp)
         self.name = name
     def __del__(self):
         if self.End is empQueue.doNothing:
@@ -976,7 +976,7 @@ class CmdNova(baseCommand):
                   postFlag=empQueue.QU_FORCEBURST)
 ##	self.Send("esync")
 
-class HandleNova(empQueue.baseDisp):
+class HandleNova(empParse.baseDisp):
     """Parse class for nova handled explores.
 
     This class receives output after the empParse.ParseMove class.
@@ -985,7 +985,7 @@ class HandleNova(empQueue.baseDisp):
     """
 
     def __init__(self, disp, slf, comd, start, dest):
-        empQueue.baseDisp.__init__(self, disp)
+        empParse.baseDisp.__init__(self, disp)
         self.slf = slf
         self.comd = comd
         self.start = start
@@ -1047,10 +1047,10 @@ class HandleNova(empQueue.baseDisp):
                     mm.group('sectorX'), mm.group('sectorY'))),
                 self.out)
 
-##  class HandleFlush(empQueue.baseDisp):
+##  class HandleFlush(empParse.baseDisp):
 ##      """Class to handle programable sub-prompts."""
 ##      def __init__(self, disp, prompts):
-##  	empQueue.baseDisp.__init__(self, disp)
+##  	empParse.baseDisp.__init__(self, disp)
 ##  	self.prompts = list(prompts)
 ##      def flush(self, msg):
 ##  	for i in range(prompts):
@@ -1075,7 +1075,7 @@ class HandleNova(empQueue.baseDisp):
 ##  	else:
 ##  	    self.out.flush(msg)
 
-class ParseShow(empQueue.baseDisp):
+class ParseShow(empParse.baseDisp):
     """Rearrange output from multiple commands into a set of columns.
 
     This is a hack!  - It is really only usefull for show XXX YYY.
@@ -1089,7 +1089,7 @@ class ParseShow(empQueue.baseDisp):
     """
 
     def __init__(self, disp):
-        empQueue.baseDisp.__init__(self, disp)
+        empParse.baseDisp.__init__(self, disp)
 
         self.CBody = []
         self.Body = []
@@ -1155,10 +1155,10 @@ class ParseShow(empQueue.baseDisp):
         else:
             self.CBody[0:0] = [ msg[25:] ]
 
-class RedirectOutput(empQueue.baseDisp):
+class RedirectOutput(empParse.baseDisp):
     """Redirect a command to a file or program."""
     def __init__(self, disp, name, type):
-        empQueue.baseDisp.__init__(self, disp)
+        empParse.baseDisp.__init__(self, disp)
         self.name = name
         self.type = type
     def Begin(self, cmd):
@@ -1221,9 +1221,9 @@ def getMoveQuantity(txt, commodity, sectors):
 
     return quantity
 
-##  class telegramParser(empQueue.baseDisp):
+##  class telegramParser(empParse.baseDisp):
 ##      def __init__(self, cmd, msg):
-##  	empQueue.baseDisp.__init__(self, viewer)
+##  	empParse.baseDisp.__init__(self, viewer)
 ##  	self.cmd = cmd
 ##  	self.msg = string.split(string.rstrip(msg), '\n')
 ##      prompt = empParse.ParseTele.prompt
