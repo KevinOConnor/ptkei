@@ -1,3 +1,11 @@
+2003-03-06  Laurent Martin  <laurent@lfmm.org>
+
+	* empCmd(CmdRefresh.transmit): Added a 'dump * mob' to the refresh
+	command when MOB_ACCESS is enabled. 
+
+	* MapWin(mapSubWin.redraw): Fixed sector status when the mobility
+	is below 0 (MOB_ACCESS activated). 
+
 2003-02-23  Laurent Martin  <laurent@lfmm.org>
 
 	* Release of ptkei 1.17.0.
