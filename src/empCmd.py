@@ -22,7 +22,6 @@ import string
 import re
 import bisect
 import types
-import math
 
 import empQueue
 import empDb
@@ -1596,6 +1595,10 @@ class CmdLTest(baseCommand):
             return
         fromLoc = (unit['x'], unit['y'])
         toLoc = (int(mm.group('xLoc')), int(mm.group('yLoc')))
+        if fromLoc == toLoc:
+            self.out.data("Using best path 'h', movement cost 0.000")
+            self.out.data("Total movement cost cost: 0")
+            return
         self.out.data("Looking for best path to %d,%d" % toLoc)
         path = empPath.best_path(fromLoc, toLoc)
         if path is None:
@@ -1609,9 +1612,15 @@ class CmdLTest(baseCommand):
         mcost = path.cost * 5.0 * 480.0 / (unit['spd'] + unit['spd'] *
                                            (50.0 + unit['tech']) /
                                            (200.0 + unit['tech']))
-        mcost = int(math.ceil(mcost))
-        if mcost > unit['mob']:
+        last_step = empSector.mob_cost(empDb.megaDB['SECTOR'][toLoc])
+        last_step = last_step * 5.0 * 480.0 / (unit['spd'] + unit['spd'] *
+                                               (50.0 + unit['tech']) /
+                                               (200.0 + unit['tech']))
+        
+        if mcost - last_step > unit['mob']:
             self.out.data("Not enough mobility to go all the way.")
         else:
-            self.out.data("Total movement cost cost: %d" % (mcost))
+            newmob = int(unit['mob'] - mcost)
+            self.out.data("Total movement cost cost: %d, new mob: %d" %
+                          (unit['mob'] - newmob, newmob))
         
