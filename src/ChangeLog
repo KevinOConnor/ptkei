@@ -1,5 +1,11 @@
 2003-03-19  Laurent Martin  <laurent@lfmm.org>
 
+	* empCmd(Cmd*): Added a commandUsage string that gets printed when
+	the user enters a malformed ptkei command.
+
+	* OutWin(Cmd*): Added a commandUsage string that gets printed when
+	the user enters a malformed ptkei command.
+
 	* empCmd(CmdLTest.receive): Fixed the case where from and to
 	sectors are the same.
 
