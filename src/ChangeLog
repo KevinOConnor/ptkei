@@ -1,16 +1,19 @@
-2003-02-23  Laurent Maritn  <laurent@lfmm.org>
+2003-02-23  Laurent Martin  <laurent@lfmm.org>
 
 	* Release of ptkei 1.17.0.
-	
-2003-02-23  Laurent Maritn  <laurent@lfmm.org>
-	
+
+2003-02-23  Laurent Martin  <laurent@lfmm.org>
+
 	* empSector(sectorPredictions): Handle the case where you log in a
 	game with a capital not 100% efficient without a database.  The
 	'nation' statement returns info about the capital but you get an
 	error when trying to see its prediction (as the info don't contain
 	designations). 
 
-2003-02-20  Laurent Maritn  <laurent@lfmm.org>
+	* empDb(DatabaseSaver.reset): Changed the default Empire
+        server to blitz.wolfpackempire.com:6789.
+
+2003-02-20  Laurent Martin  <laurent@lfmm.org>
 
 	* empParse(updateDesignations):  Parsing a standard map do not
 	modify sectors ownership in order to cope with custom sector
