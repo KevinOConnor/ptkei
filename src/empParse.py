@@ -492,6 +492,10 @@ curtimeFormat = re.compile("^"+s_time+"$")
 
 class ParseDump(empQueue.baseDisp):
     """Parse output from dump command."""
+    attach = (('dump', -2), ('pdump', -2), ('ldump', -2),
+              ('sdump', -2), ('ndump', -2), ('lost', 3))
+    altersDB = ""
+
     dumpcommand = re.compile(r"^\s*\S+\s+(\S+)(?:\s+(\S+)\s*)?$")
 ##     timestamp = re.compile(r"^(?:\?timestamp>(\d+))?$")
     def Begin(self, cmd):
@@ -659,6 +663,8 @@ class ParseDump(empQueue.baseDisp):
 
 class ParseMap(empQueue.baseDisp):
     """Parse output from various map commands."""
+    attach = (('map', -3), ('nmap', -2), ('bmap', -2))
+    altersDB = ""
     mapcommand = re.compile(r"^\s*(\S?)map")
     def Begin(self, cmd):
         self.out.Begin(cmd)
@@ -730,8 +736,9 @@ s_sector2 = r"(?P<sector2X>"+ss_sect+"),(?P<sector2Y>"+ss_sect+")"
 s_comm = r"(?P<comm>\S+)"
 class ParseMove(empQueue.baseDisp):
     """Parse an explore prompt."""
-    def __init__(self, disp):
-        empQueue.baseDisp.__init__(self, disp)
+    attach = (('explore', -3), ('move', -3), ('transport', -4), ('test', -3))
+    # XXX - test doesn't alter the database
+    def Begin(self, cmd):
         self.map = []
 
     ownSector = re.compile("^Sector "+s_sector+" is now yours\.$")
@@ -767,6 +774,12 @@ s_counIdent = s_counName + " " + s_counId
 s_eff = r"(?P<eff>\d+)%"
 class ParseUnits(empQueue.baseDisp):
     """Parse info from a variety of unit type commands."""
+    attach = (
+        ('radar', -3), ('lradar', -4), ('lookout', -3),
+        ('llookout', -4), ('navigate', -3), ('march', -4),
+        ('sonar', -3))
+    # XXX - only march/navigate alters the database
+
     def Begin(self, cmd):
         self.out.Begin(cmd)
         self.num = None
@@ -949,6 +962,14 @@ look_info = re.compile(r"^(?:Your|"+s_counIdent+") "+ParseUnits.s_shipOrSector
 
 class ParseSimpleTime(empQueue.baseDisp):
     """Simple class that will extract the time from the first line."""
+    attach = (
+        ('census', -2), ('resource', -4), ('cutoff', -2),
+        ('sinfrastructure', -2),
+        ('commodity', -3), ('level', -3), ('neweff', -4),
+        ('production', -3),
+        ('strength', -3), ('stop', -3), ('start', -5),
+        ('anti', -3))
+    attach = (("", 0),)
     def Begin(self, cmd):
         self.out.Begin(cmd)
         self.done = 0
@@ -962,7 +983,8 @@ class ParseSimpleTime(empQueue.baseDisp):
 
 class ParseSpy(empQueue.baseDisp):
     """Handle spy reports."""
-
+    attach = (('spy', -2),)
+    altersDB = "e"
     # Translations from header names to dump names:
     headerConvert = {
         'sect': sectToCoords, 'de': newdesToDes,
@@ -974,8 +996,7 @@ class ParseSpy(empQueue.baseDisp):
         #    'lnd': xxx, 'pln': xxx,
         }
 
-    def __init__(self, disp):
-        empQueue.baseDisp.__init__(self, disp)
+    def Begin(self, cmd):
         self.pos = 0
         self.changes = []
 
@@ -1027,6 +1048,7 @@ class ParseSpy(empQueue.baseDisp):
         empDb.megaDB['SECTOR'].updates(self.changes)
 
 class ParseAttack(empQueue.baseDisp):
+    attach = (('attack', -2), ('assault', -2))
     # 8,0 is a 100% AUJ highway with approximately 150 military.
     # 21 of your troops now occupy -10,12
     s_mil = "(?P<mil>\d+)"
@@ -1077,6 +1099,8 @@ class ParseAttack(empQueue.baseDisp):
 
 class ParseCoastWatch(empQueue.baseDisp):
     """Handle the coastwatch command."""
+    attach = (('coastwatch', 3),)
+    altersDB = ""
 ##   ptkei-0.21 (#  1) bb   battleship (#12) @ 0,-4
     s_counIdent = s_counName + r" \(#\s*(?P<counId>\d+)\)"
     line = re.compile("^\s*"+s_counIdent+" "+s_shipIdent+" @ "+s_sector)
@@ -1085,6 +1109,8 @@ class ParseCoastWatch(empQueue.baseDisp):
         getLookInfo(msg, 'SHIP')
 
 class ParseSate(empQueue.baseDisp):
+    attach = (('satellite', -3),)
+    altersDB = ""
     def Begin(self, cmd):
         self.out.Begin(cmd)
         self.pos = 0
@@ -1185,6 +1211,7 @@ class ParseSate(empQueue.baseDisp):
 
 class ParseBuild(empQueue.baseDisp):
     """Parse build command."""
+    attach = (('build', -3),)
     buildItems = re.compile(r"^(?:Bridge span built over|"
                             "(?P<tower>Bridge tower built in)|"
                             +s_shipOrLand+" built in sector) "
@@ -1221,6 +1248,8 @@ class ParseBuild(empQueue.baseDisp):
 
 class ParseCapital(empQueue.baseDisp):
     """Parse output from capital command."""
+    attach = (('capital', -3),)
+    altersDB = ""
     moveCapital = re.compile(r"^Capital now at "+s_sector+"\.$|"
                              +"^"+s_sector2+" is already your capital\.$")
     def data(self, msg):
@@ -1235,6 +1264,8 @@ class ParseCapital(empQueue.baseDisp):
 
 class ParseReport(empQueue.baseDisp):
     """Parse output from report command."""
+    attach = (('report', -4),)
+    altersDB = ""
     def data(self, msg):
         mm = curtimeFormat.match(msg)
         if mm:
@@ -1251,6 +1282,9 @@ class ParseReport(empQueue.baseDisp):
 
 class ParseRelations(empQueue.baseDisp):
     """Parse output from relations."""
+    attach = (('relations', -3),)
+    altersDB = ""
+
     s_yourRelation = r"(?P<your>\S+)"
     s_theirRelation = r"(?P<their>\S+)"
     header = re.compile("^\s*"+s_counName
@@ -1266,6 +1300,8 @@ class ParseRelations(empQueue.baseDisp):
 
 class ParseRealm(empQueue.baseDisp):
     """Parse output from realm command."""
+    attach = (('realm', -4),)
+    altersDB = ""
     s_range = (r"(?P<minX>"+ss_sect+"):(?P<maxX>"+ss_sect
                +"),(?P<minY>"+ss_sect+"):(?P<maxY>"+ss_sect+")")
     s_realm = r"#(?P<realm>\d+)"
@@ -1281,6 +1317,8 @@ class ParseRealm(empQueue.baseDisp):
 
 class ParseTele(empQueue.baseDisp):
     """Parse outgoing telegrams for future reference."""
+    attach = (('telegram', -3),)
+    altersDB = ""
     def Begin(self, cmd):
         self.out.Begin(cmd)
         self.to = None
@@ -1336,6 +1374,8 @@ class ParseRead(empQueue.baseDisp):
     is received.  It then stores these telegrams and annoucements in the
     database.
     """
+    attach = (('read', 4), ('wire', -3))
+    altersDB = ""
     def Begin(self, cmd):
         self.out.Begin(cmd)
 
@@ -1411,6 +1451,8 @@ ss_flt = r"\d+(?:\.\d+)?"
 
 class ParseVersion(empQueue.baseDisp):
     """Parse the version info."""
+    attach = (('version', 1),)
+    altersDB = ""
     def Begin(self, cmd):
         self.out.Begin(cmd)
         self.pos = 0
@@ -1602,6 +1644,8 @@ class ParseVersion(empQueue.baseDisp):
 
 class ParseNation(empQueue.baseDisp):
     """Parse nation command."""
+    attach = (('nation', 3),)
+    altersDB = ""
     nationVars = re.compile(
         # (#6) TestPtkei Nation Report  Thu Nov 12 13:27:43 1998
         "^"+s_counId+" "+s_counName+" Nation Report\t"+s_time+"$|"
@@ -1684,6 +1728,8 @@ class ParseUpdate(empQueue.baseDisp):
     Grab info that will allow the client to calculate when the next update
     will occur.
     """
+    attach = (('update', 3),)
+    altersDB = ""
 ## The next update is at Sun Sep  6 20:00:00.
 ## The current time is   Sun Sep  6 19:07:38.
     getTimes = re.compile(
@@ -1701,7 +1747,7 @@ class ParseUpdate(empQueue.baseDisp):
 
 class ParseSpyPlane(empQueue.baseDisp):
     """Handle spy plane reports."""
-
+    attach = (('recon', -3),)
     # Translations from header names to dump names:
     headerConvert = {
         'sect': sectToCoords, 'type': newdesToDes,
@@ -1711,8 +1757,7 @@ class ParseSpyPlane(empQueue.baseDisp):
         'iron': 'iron', 'pet': 'pet', 'food': 'food',
         }
 
-    def __init__(self, disp):
-        empQueue.baseDisp.__init__(self, disp)
+    def Begin(self, cmd):
         self.mode = 0
         self.sect_changes = []
         self.ship_changes = []
@@ -1802,33 +1847,10 @@ class ParseSpyPlane(empQueue.baseDisp):
         empDb.megaDB['LAND UNITS'].updates(self.land_changes)
         empDb.megaDB['SECTOR'].updates(self.sect_changes)
 
-class ParseBomb(empQueue.baseDisp):
-    """Handle the bomb command to find sunk ships."""
-    ##   ms   minesweeper (#223) sunk!
-    line = re.compile("^\s*"+s_shipIdent+" sunk!")
-    def data(self, msg):
-        self.out.data(msg)
-        mm = self.line.match(msg)
-        if mm:
-            id = string.atoi(mm.group('shipId'))
-            empDb.megaDB['SHIPS'].updates([
-                {'id': id, 'owner': CN_UNOWNED}])
-
 class ParseFire(empQueue.baseDisp):
     """Handle the fire command to find sunk ships."""
+    attach = (('bomb', -3), ('fire', -3), ('torpedo', -3))
     ##   ms   minesweeper (#223) sunk!
-    line = re.compile("^\s*"+s_shipIdent+" sunk!")
-    def data(self, msg):
-        self.out.data(msg)
-        mm = self.line.match(msg)
-        if mm:
-            id = string.atoi(mm.group('shipId'))
-            empDb.megaDB['SHIPS'].updates([
-                {'id': id, 'owner': CN_UNOWNED}])
-
-class ParseTorpedo(empQueue.baseDisp):
-    """Handle the torpedo command to find sunk ships."""
-    ## ms   minesweeper (#223) sunk!
     line = re.compile("^\s*"+s_shipIdent+" sunk!")
     def data(self, msg):
         self.out.data(msg)
@@ -1839,6 +1861,8 @@ class ParseTorpedo(empQueue.baseDisp):
                 {'id': id, 'owner': CN_UNOWNED}])
 
 class ParseShow(empQueue.baseDisp):
+    attach = (('show', -4),)
+    altersDB = ""
     def Begin(self,cmd):
         self.out.Begin(cmd)
         self.what = ''
@@ -2032,84 +2056,18 @@ DB_LOST = 32
 DB_ALL = DB_SECTOR|DB_LAND|DB_SHIP|DB_PLANE|DB_NUKE|DB_LOST
 
 def initialize():
-    commandUpdates = []
     standardParsers = []
-    for i in (
-        (ParseRead,
-         ('read', 4, 0), ('wire', -3, 0)),
-        (ParseTele,
-         ('telegram', -3, 0)),
-        (ParseDump,
-         ('dump', -2, 0), ('pdump', -2, 0), ('ldump', -2, 0),
-         ('sdump', -2, 0), ('ndump', -2, 0), ('lost', 3, 0)),
-        (ParseMap,
-         ('map', -3, 0), ('nmap', -2, 0), ('bmap', -2, 0)),
-        (ParseRealm,
-         ('realm', -4, 0)),
-        (ParseMove,
-         ('explore', -3, 1), ('move', -3, 1),
-         ('transport', -4, 1), ('test', -3, 0)),
-        (ParseVersion,
-         ('version', 1, 0)),
-        (ParseUpdate,
-         ('update', 3, 0)),
-        (ParseNation,
-         ('nation', 3, 0)),
-        (ParseCapital,
-         ('capital', -3, 0)),
-        (ParseSpy,
-         ('spy', -2, 1)),
-        (ParseAttack,
-         ('attack', -2, 1), ('assault', -2, 1)),
-        (ParseUnits,
-         ('radar', -3, 0), ('lradar', -4, 0), ('lookout', -3, 0),
-         ('llookout', -4, 0), ('navigate', -3, 1), ('march', -4, 1),
-         ('sonar', -3, 0)),
-    ##     (ParsePathSetting,
-        (None,
-         ('sail', -3, 1), ('bomb', -3, 1), ('fly', -3, 1),
-         ('paradrop', -3, 1), ('sweep', -2, 1)),
-        (ParseSpyPlane,
-         ('recon', -3, 1)),
-        (ParseReport,
-         ('report', -4, 0)),
-        (ParseRelations,
-         ('relations', -3, 0)),
-        (ParseCoastWatch,
-         ('coastwatch', 3, 0)),
-        (ParseBuild,
-         ('build', -3, 1)),
-        (ParseSimpleTime,
-         ('census', -2, 0), ('resource', -4, 0), ('cutoff', -2, 0),
-         ('sinfrastructure', -2, 0),
-         ('commodity', -3, 0), ('level', -3, 0), ('neweff', -4, 0),
-         ('production', -3, 0),
-         ('strength', -3, 0), ('stop', -3, 1), ('start', -5, 1),
-         ('anti', -3, 1)),
-        (ParseSate,
-         ('satellite', -3, 0)),
-        (ParseBomb,
-         ('bomb', 3, 0)),
-        (ParseFire,
-         ('fire', 3, 0)),
-        (ParseTorpedo,
-         ('torpedo', 3, 0)),
-        (ParseShow,
-         ('show', 4, 0)),
-        (None,
-         ('motd', 3, 0)),
+    for cls in (
+        ParseRead, ParseTele, ParseDump, ParseMap, ParseRealm,
+        ParseMove, ParseVersion, ParseUpdate, ParseNation, ParseCapital,
+        ParseSpy, ParseAttack, ParseUnits, ParseSpyPlane, ParseReport,
+        ParseRelations, ParseCoastWatch, ParseBuild, ParseSimpleTime,
+        ParseSate, ParseFire, ParseShow,
         ):
-        for j in i[1:]:
-            if i[0] is not None:
-                standardParsers.append(j[:2]+i[:1])
-            commandUpdates.append(j)
+        for binding in cls.attach:
+            standardParsers.append(binding + (cls,))
     standardParsers.sort()
-    commandUpdates.sort()
     empQueue.standardParsers = standardParsers
-##      for k in range(abs(j[1]), len(j[0])+1):
-##          if i[0] != None:
-##              standardParsers[j[0][:k]] = i[0]
-##          commandUpdates[j[0][:k]] = j[2]
 
 initialize()
 
