@@ -41,4 +41,5 @@ alias R read y
 ## server time and local time.  Therefore, at least one command that
 ## receives the server time should be sent to ensure the update timer is
 ## accurate.  The command "update" is as good as any..
+null show sector stat
 null update
