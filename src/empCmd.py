@@ -106,13 +106,13 @@ import empSector
 # "translators" - they don't need synchronization.)
 #
 # receive: Defining this method causes a special location marker to be
-# inserted into the command-queue.  Once the server/client transmit all the
-# commands prior to this marker, the callback is invoked.  This mechanism
-# provides for synchronization in the command-queue.  This is the standard
-# callback used anytime a command uses the internal database.  (If a user
-# issues a command "rdb" followed "mmove", the rdb command needs to be
-# processed before calculating moves - else the moves wont utilize the
-# latest database information.)  It is also the standard callback for
+# inserted into the command-queue.  Once the server/client transmits all
+# the commands prior to this marker, the callback is invoked.  This
+# mechanism provides for synchronization in the command-queue.  This is the
+# standard callback used anytime a command uses the internal database.  (If
+# a user issues a command "rdb" followed by "mmove", the rdb command needs
+# to be processed before calculating moves - else the moves wont utilize
+# the latest database information.)  It is also the standard callback for
 # commands that send date to the output window.  (If the user issues "map #
 # ; define", the command listing must come only after all the map output
 # has been displayed.)
@@ -134,10 +134,6 @@ class EmpParse:
     more 'user-friendly' then the empQueue stuff.  The major interaction
     with this class is done via the Send() module which is passed simple
     ASCII strings that are to be transmitted.
-
-    Also in this class are some smart-features.  Check for the methods that
-    are labeled 'CmdXXX' for these functions.  In all likelihood these
-    functions will be separated in the future..
 
     Note: This class generally only has one instantiation - viewer.ioq
     """
@@ -343,7 +339,7 @@ class baseCommand:
     used by EmpParse when the command is 'registered':
 
     defaultPreList - Sets the 'parse ordering' of the command.
-    defaultBindings - A list of name/length pairs to bind the command to.
+    defaultBinding - A list of name/length pairs to bind the command to.
 
     The following methods are supported:
 
@@ -356,7 +352,7 @@ class baseCommand:
 
     description = "No help available."
 
-    defaultPreList = defaultBindings = None
+    defaultPreList = defaultBinding = None
     sendRefresh = None
     invoke = receive = transmit = None
     commandFormat = None
