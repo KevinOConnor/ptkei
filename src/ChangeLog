@@ -1,3 +1,9 @@
+2003-03-14  Laurent Martin  <laurent@lfmm.org>
+
+	* empCmd(CmdLTest): Added a new command: ltest.  It works like the
+	'test' command but displays the amount of mobility a land unit
+	would use to reach a given sector.
+
 2003-03-06  Laurent Martin  <laurent@lfmm.org>
 
 	* empCmd(CmdRefresh.transmit): Added a 'dump * mob' to the refresh
