@@ -102,29 +102,27 @@ class baseDisp:
     """Base class for chained parsing classes.  (Does little by itself.)
 
     Basically, this class just insures that all the sub-classes support the
-    standard chained display class protocols:
-
-    Begin() - notes the beginning of a command.
-    data() - notes a line of data.
-    flush() - notes a sub-prompt.
-    Answer() - notes the response to a sub-prompt.
-    End() - notes the termination of a command.
-    Process() - notes a lull in server output.
-
-    This class also defines self.out - a handy reference to the next parser
-    in the display chain.
-
-    Note: Because the global viewer class is generally at the top of the
-    chain, it must support all of the above methods.  (But because this
-    class is used for chaining, the global viewer is not an ancestor of
-    this class.)
-    """
+    standard chained display class protocols."""
     def __init__(self, disp):
-        # Establish defaults for all the standard display class commands.
         self.out = disp
-        for i in ('Begin', 'data', 'flush', 'Answer', 'End', 'Process'):
-            if not hasattr(self, i):
-                setattr(self, i, getattr(disp, i))
+    def Begin(self, command):
+        """note the beginning of a command"""
+        self.out.Begin(command)
+    def data(self, line):
+        """note a line of data"""
+        self.out.data(line)
+    def flush(self, prompt, callback):
+        """note a sub-prompt"""
+        self.out.flush(prompt, callback)
+    def Answer(self, response):
+        """note the response to a sub-prompt"""
+        self.out.Answer(response)
+    def End(self, command):
+        """note the end of a command"""
+        self.out.End(command)
+    def Process(self):
+        """note a lull in server output"""
+        self.out.Process()
 
 
 CN_OWNED = empDb.CN_OWNED
