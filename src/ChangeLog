@@ -1,3 +1,9 @@
+2003-02-20  Laurent Maritn  <laurent@lfmm.org>
+
+	* empParse(updateDesignations):  Parsing a standard map do not
+	modify sectors ownership in order to cope with custom sector
+	types.
+
 2003-02-19  Laurent Martin  <laurent@lfmm.org>
 
 	* empParse(ParseUnits.data): Handle the case of a sonar output
