@@ -20,6 +20,7 @@ import Tkinter
 import string
 import re
 
+import MyText
 import empQueue
 import empCmd
 
@@ -36,12 +37,12 @@ class SimpDisp(empQueue.baseDisp):
         self.Root.iconname(title)
 
         title = string.lower(string.split(title, None, 1)[0])
-
         # Create text box and scrollbar
         scrollY = Tkinter.Scrollbar(self.Root, name="scrollY")
         scrollY.pack(side='right', fill='y')
-        self.Text = Tkinter.Text(self.Root, name=title, setgrid=1, state='disabled',
-                         yscrollcommand=scrollY.set)
+        self.Text = MyText.MyText(self.Root, name=title, setgrid=1, 
+                                  yscrollcommand=scrollY.set)
+        self.Text.setEditable(0)
         self.Text.pack(side='left', expand=1, fill='both')
         scrollY['command'] = self.Text.yview
 
@@ -64,9 +65,9 @@ class SimpDisp(empQueue.baseDisp):
         if self.data is empQueue.doNothing:
             # Window was closed
             return
-        self.Text['state'] = 'normal'
+        self.Text.setEditable(1)
         self.Text.insert('end', line+"\n")
-        self.Text['state'] = 'disabled'
+        self.Text.setEditable(0)
 
 class CmdWind(empCmd.baseCommand):
     description = "Output arbitrary command to its own Tk Window."

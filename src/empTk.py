@@ -30,7 +30,7 @@ import Tk_VDB
 import MapWin
 import CenWin
 import LoginWin
-
+import MyText
 import OutWin
 import TeleWin
 
@@ -187,8 +187,10 @@ class mainWin:
 
         scrollY = Tkinter.Scrollbar(self.Root, name="ioscrollbar")
         scrollY.pack(in_=ioframe, side='right', anchor='e', fill='y')
-        self.Output = Tkinter.Text(self.Root, name="iobox", state='disabled',
-                                   yscrollcommand=scrollY.set)
+        self.Output = MyText.MyText(self.Root, name="iobox",
+                                    yscrollcommand=scrollY.set,
+                                    next = self.Prompt)
+        self.Output.setEditable(0)
         self.Output.pack(in_=ioframe, side='left', anchor='se',
                          expand=1, fill='both')
 ##  	scrollY = Tkinter.Scrollbar(ioframe, name="ioscrollbar")
@@ -306,14 +308,14 @@ class mainWin:
 
     def displayMsgs(self):
         """Send the internal message queue to the Tk interface."""
-        self.Output['state']='normal'
+        self.Output.setEditable(1)
         self.msgQueue[:0] = ['end']
         apply(self.Output.insert, tuple(self.msgQueue))
 
         # Delete any lines in excess of 1000
         self.Output.delete('1.0', 'end - 1000 lines')
 
-        self.Output['state']='disabled'
+        self.Output.setEditable(0)
         self.Output.see('end')
         del self.msgQueue[:]
 
@@ -532,7 +534,7 @@ class mainWin:
         win.bind('<Key>', (lambda e:
                            (not e.char or
                             e.widget.focus_get().__class__ in (
-                                Tkinter.Text, Tkinter.Entry))
+                                MyText.MyText, Tkinter.Entry))
                            or viewer.Root.focus_lastfor().focus()
                            or viewer.Root.event_generate('<Key>',
                                                          state=e.state,

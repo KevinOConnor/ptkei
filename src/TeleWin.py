@@ -24,7 +24,7 @@ import Tkinter
 import Pmw
 
 import Tk_List
-
+import MyText
 import empQueue
 import empDb
 import empParse
@@ -136,8 +136,9 @@ class teleWin:
         # Create text box and scrollbar
         scrollY = Tkinter.Scrollbar(self.Root, name="scrollY")
         scrollY.pack(side='right', anchor='e', fill='y')
-        self.Text = Tkinter.Text(self.Root, name="text", state='disabled',
-                         yscrollcommand=scrollY.set)
+        self.Text = MyText.MyText(self.Root, name="text",
+                                  yscrollcommand=scrollY.set)
+        self.Text.setEditable(0)
         self.Text.pack(side='left', anchor='w', expand=1, fill='both')
         scrollY['command'] = self.Text.yview
         self.Text.bind('<Button-3>', viewer.DoLocateSector)
@@ -169,9 +170,9 @@ class teleWin:
 
     def SetMsg(self, msg):
         """Tk/Listbox callback: Note a change in current message."""
-        if self.Text['state'] == 'normal':
+        if self.Text.editable:
             return
-        self.Text['state'] = 'normal'
+        self.Text.setEditable(1)
         self.Text.delete('1.0', 'end')
         printTime = empDb.megaDB['time'].printTime
         getName = empDb.megaDB['countries'].getName
@@ -187,7 +188,7 @@ class teleWin:
             self.Text.insert('end', hdr)
             for j in i[1:]:
                 self.Text.insert('end', str(j)+"\n")
-        self.Text['state'] = 'disabled'
+        self.Text.setEditable(0)
 
     def redraw(self, total=1):
         """DB update handler:  Redraw the window."""
@@ -248,9 +249,10 @@ class teleWin:
     teleMatch = re.compile("(?P<num>\d+)")
     def DoSend(self):
         """Tk callback: Process Send button request."""
-        if self.Text['state'] == 'normal':
+        if self.Text.editable:
             # Sending after a reply button.
-            self.Text['state'] = self.AbortB['state'] = 'disabled'
+            self.Text.setEditable(0)
+            self.AbortB['state'] = 'disabled'
             self.ReplyB['state'] = self.RemoveB['state'] = \
                                    self.AnnoB['state'] = \
                                    self.TeleB['state'] = 'normal'
@@ -279,13 +281,15 @@ class teleWin:
         self.ReplyB['state'] = self.RemoveB['state'] = \
                                self.AnnoB['state'] = \
                                self.TeleB['state'] = 'disabled'
-        self.Text['state'] = self.AbortB['state'] = 'normal'
+        self.Text.setEditable(1)
+        self.AbortB['state'] = 'normal'
         self.Text.delete('0.0', 'end')
         self.Text.focus()
 
     def DoAbort(self):
         """Tk callback: Process Abort button request."""
-        self.Text['state'] = self.AbortB['state'] = 'disabled'
+        self.Text.setEditable(0)
+        self.AbortB['state'] = 'disabled'
         self.ReplyB['state'] = self.RemoveB['state'] = \
                                self.AnnoB['state'] = \
                                self.TeleB['state'] = 'normal'
@@ -312,7 +316,8 @@ class teleWin:
         self.ReplyB['state'] = self.RemoveB['state'] = \
                                self.AnnoB['state'] = \
                                self.TeleB['state'] = 'disabled'
-        self.Text['state'] = self.AbortB['state'] = 'normal'
+        self.Text.setEditable(1)
+        self.AbortB['state'] = 'normal'
         for i in range(len(which[0])):
             self.Text.insert("%s.0"%(i+1), " >")
         self.Text.focus()
