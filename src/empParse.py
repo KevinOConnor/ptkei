@@ -1782,14 +1782,21 @@ class ParseSpyPlane(baseDisp):
     def data(self, msg):
         self.out.data(msg)
         if self.mode == 0:
-            if msg == 'SPY Plane report' or msg == 'Reconnaissance report':
+            if msg == 'SPY Plane report':
                 self.mode = 1
+                self.spyPlane = 1
+            elif msg == 'Reconnaissance report':
+                self.mode = 1
+                self.spyPlane = 0
         elif self.mode == 1:
             # Note date
             mm = curtimeFormat.match(msg)
             if mm:
                 empDb.megaDB['time'].noteTime(mm)
-                self.mode = 2
+                if self.spyPlane == 1:
+                    self.mode = 2
+                else:
+                    self.mode = 4
         elif self.mode == 2:
             # first header
             self.hdr = msg
@@ -1811,13 +1818,14 @@ class ParseSpyPlane(baseDisp):
                     self.sect_changes.append(info)
 # for some reason spy planes can't see ships at sea. is this a server bug?
                 else:
-                   info = composeBody(self.hdr, msg)
-                   if info:
-                       self.sect_changes.append(info)
-                   else:
-                       # When performing a recon with a non spy capable plane
-                       #lfm
-                       getLookInfo(msg)
+                    if self.spyPlane == 1:
+                        info = composeBody(self.hdr, msg)
+                        if info:
+                            self.sect_changes.append(info)
+                    else:
+                        # When performing a recon with a non spy capable plane
+                        #lfm
+                        getLookInfo(msg)
                                                       
 # the other case that could come up is flak a message of the form:
 # "firing 9 flak guns in 26,2..."
