@@ -2,6 +2,8 @@
 
 	* empParse.py: Simplify baseDisp class - existing code was a gross
 	premature optimization.
+	(convertList): Remove wrapper for buggy python atoi function (move
+	test to empire.py).
 
 	* empQueue.py, OutWin.py, empParse.py, empCmd.py: Move definition
 	of baseDisp class from empQueue.py to empParse.py.  Also move
