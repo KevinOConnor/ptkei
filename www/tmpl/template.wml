@@ -19,28 +19,53 @@
   <navbar:button id=author txt="Contacting the Author" url="$(ROOT)/contact.html" hint="Contacting the Author">
 </navbar:define>
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html lang="en">
+<?xml version="1.0" encoding="us-ascii"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <title>{#TITRE#}</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
     <style type="text/css">
+	body { background-color: #fff; 
+		font-family: "Trebuchet MS", Verdana, Geneva, Arial, Helvetica, sans-serif;
+	        font-size:small; line-height: 150%;
+
+	}
 	a { text-decoration: none; }
         a:hover {text-decoration: underline;}
+	h1 { text-align: center; }
+	code, pre {
+        font-family: "Courier New", Courier, monospace;
+        font-size: small;
+}
+
+	.lcol { 
+		width: 20%; 
+		position: absolute;
+		background-color: #f5f8fc;
+		border: 1px solid #69c;
+		padding: 1px 1ex;
+	}
+	.rcol { 
+		width: 75%; 
+		color: #000;
+	        line-height: 150%;
+		margin: 0 0 0 25%;
+
+	}
     </style>
   </head>
-<body bgcolor="#ffffff">
-<table width="100%" cellpadding="3" cellspacing="0" border="0">
-<tr>
-<td width="150" valign="top" align="left" nowrap>
+<body>
+<div class="lcol">
 <navbar:render name=$(name) select=$(select) nohints>
-</td>
-<td valign="top" align="left" width="90%">
-<h1 align="center">{#TITRE#}</h1>
+</div>
+<div class="rcol">
+<h1>{#TITRE#}</h1>
 {#BODY#}
-</td>
-</tr>
-</table>
+</div>
+<!-- <p>Page written in <a href="http://validator.w3.org/check/referer">XHTML 1 Strict</a> and <a href="http://jigsaw.w3.org/css-validator/">CSS</a></p> -->
+
 </body>
 </html>
 
