@@ -22,6 +22,7 @@ import string
 import re
 import bisect
 import types
+import math
 
 import empQueue
 import empDb
@@ -180,7 +181,7 @@ class EmpParse:
                           , CmdOut, CmdNova, CmdPredict, CmdMover
                           , CmdRaw, CmdOrigin, CmdMMove, CmdEMove
                           , CmdRemove, CmdDanno, CmdDtele, CmdProjection
-                          , CmdDmove, CmdSetFood)
+                          , CmdDmove, CmdSetFood, CmdLTest)
 
     def registerCmds(self, *args):
         """Register a list of commands."""
@@ -1571,3 +1572,44 @@ class CmdSetFood(baseCommand):
                 cmd = 'threshold food %d,%d %d' % (xy[0], xy[1], new_thr)
                 self.Send(cmd, self.out, 1)
 
+class CmdLTest(baseCommand):
+    description = """Compute the amount of mobility a land unit would
+    use to reach a given sector."""
+
+    defaultPreList = 1
+    defaultBinding = (("ltest", 5),)
+
+    commandFormat = re.compile("(?P<landId>\d+)\s+"+
+                               r"(?P<xLoc>-?\d+),(?P<yLoc>-?\d+)")
+
+    def receive(self):
+        mm = self.parameterMatch
+        if mm is None:
+            return
+        landId = int(mm.group('landId'))
+        try:
+            unit = empDb.megaDB['LAND UNITS'][(landId,)]
+        except KeyError:
+            viewer.Error("Land unit %d doesn't exist." % (landId))
+            return
+        fromLoc = (unit['x'], unit['y'])
+        toLoc = (int(mm.group('xLoc')), int(mm.group('yLoc')))
+        self.out.data("Looking for best path to %d,%d" % toLoc)
+        path = empPath.best_path(fromLoc, toLoc)
+        if path is None:
+            viewer.Error("Path could not be completed.")
+            return
+        s = ""
+        for i in path.directions:
+            s = s + i
+        self.out.data("Using best path '%s', movement cost %.3f" % (s,
+                                                                    path.cost))
+        mcost = path.cost * 5.0 * 480.0 / (unit['spd'] + unit['spd'] *
+                                           (50.0 + unit['tech']) /
+                                           (200.0 + unit['tech']))
+        mcost = int(math.ceil(mcost))
+        if mcost > unit['mob']:
+            self.out.data("Not enough mobility to go all the way.")
+        else:
+            self.out.data("Total movement cost cost: %d" % (mcost))
+        
