@@ -1653,6 +1653,6 @@ class CmdLTest(baseCommand):
             self.out.data("Not enough mobility to go all the way.")
         else:
             newmob = int(unit['mob'] - mcost)
-            self.out.data("Total movement cost cost: %d, new mob: %d" %
+            self.out.data("Total movement cost: %d, new mob: %d" %
                           (unit['mob'] - newmob, newmob))
         
