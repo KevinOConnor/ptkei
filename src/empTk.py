@@ -599,6 +599,7 @@ class mainWin:
 class CmdDisp(empCmd.baseCommand):
     description = "Gradually highlight specified sectors on main map."
 
+    sendRefresh = "e"
     defaultBinding = (('Disp', 4),)
 
     commandUsage = ("Disp [<commodity> <sectors>"
@@ -673,6 +674,7 @@ class CmdDisp(empCmd.baseCommand):
 class CmdSect(empCmd.baseCommand):
     description = "Highlight specified sectors on main map."
 
+    sendRefresh = "e"
     defaultBinding = (('Sect', 4),)
 
     commandUsage = "Sect [<sectors>]"

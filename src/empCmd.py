@@ -80,7 +80,7 @@ import empSector
 # set, then the class would be invoked with parameters "echo 1" and a
 # second command ("echo 2") would be buffered separately.
 #
-# 5 Define one or more of the following methods: invoke, receive, transmit.
+# 5 Define one or more of the following methods: invoke, receive, sending.
 # There can be three different callbacks associated with a command due to
 # the asynchronous nature of the command queue.  Ptkei supports
 # command-buffering - that is, if a user issues a series of commands faster
@@ -117,7 +117,7 @@ import empSector
 # ; define", the command listing must come only after all the map output
 # has been displayed.)
 #
-# transmit: This callback is invoked just before the command-queue would
+# sending: This callback is invoked just before the command-queue would
 # send the command (had it been a real command).  This is a limited use
 # callback - it is currently only used by the rdb command.  The rdb command
 # uses it to delay deciding on which commands to send until it is
@@ -346,7 +346,7 @@ class baseCommand:
     invoke - Callback invoked the moment the user types the command.
     receive - Callback invoked when the outbound command queue reaches this
                 command.
-    transmit - Callback invoked when the command queue is ready to send the
+    sending - Callback invoked when the command queue is ready to send the
                 command to the server.
     """
 
@@ -382,7 +382,7 @@ class baseCommand:
         # Call invoke method immediately
         if self.invoke is not None:
             self.invoke()
-        # Add receive/transmit method as a callback
+        # Add command to queue (if required)
         if self.receive is not None or self.sending is not None:
 ##  	    # Send DB update commands
 ##  	    if self.sendRefresh:
@@ -780,6 +780,7 @@ class CmdOut(baseCommand):
 
     description = "Debugging tool - dumps database."
 
+    sendRefresh = "espnlo"
     defaultBinding = (('out', 3),)
 
 ##      outFormat = re.compile(r"\s+(\S+)\s*$")
@@ -1404,6 +1405,7 @@ class CmdDtele(baseCommand):
 class CmdProjection(baseCommand):
     description = "Computes the new efficiency of all units"
 
+    sendRefresh = "espnlo"
     defaultPrelist = 1
     defaultBinding = (("projection", 4),)
 
@@ -1564,6 +1566,7 @@ class CmdDmove(baseCommand):
 class CmdSetFood(baseCommand):
     description = "Set food thresholds for maximum population growth"""
 
+    sendRefresh = "e"
     defaultPrelist = 1
     defaultBinding = (("setfood", 4),)
 
@@ -1615,6 +1618,7 @@ class CmdLTest(baseCommand):
     description = """Compute the amount of mobility a land unit would
     use to reach a given sector."""
 
+    sendRefresh = "el"
     defaultPreList = 1
     defaultBinding = (("ltest", 5),)
 
@@ -1662,4 +1666,3 @@ class CmdLTest(baseCommand):
             newmob = int(unit['mob'] - mcost)
             self.out.data("Total movement cost: %d, new mob: %d" %
                           (unit['mob'] - newmob, newmob))
-        

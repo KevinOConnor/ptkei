@@ -630,9 +630,10 @@ class CmdMap(empCmd.baseCommand):
 class CmdBestpath(empCmd.baseCommand):
     description = "Display a graphical best path."
 
+    sendRefresh = "e"
     defaultBinding = (('Bestpath', 4),)
 
-    def invoke(self):
+    def receive(self):
         args = self.commandMatch.group('args')
         if not args:
             coords = ()
