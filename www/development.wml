@@ -1,0 +1,16 @@
+#use wml::tmpl::template name=ptkei select=development
+
+<titre>Development Version</titre>
+
+<p>The PTkEI sources are hosted on <a
+href="http://savannah.gnu.org/">Savannah</a>.  To get the latest
+development version of PTkEI via CVS, you need to issue the following
+commands.</p>
+
+<p>First you connect to the server:</p>
+<pre>cvs -d:pserver:anoncvs@savannah.nongnu.org:/cvsroot/ptkei login</pre>
+
+<p>You will be asked for a password, just press ENTER. </p>
+
+<p>Then you download the sources:</p>
+<pre>cvs -d:pserver:anoncvs@savannah.nongnu.org:/cvsroot/ptkei co ptkei</pre>
