@@ -15,6 +15,7 @@
   <navbar:button id=screenshots txt="Screenshots" url="$(ROOT)/screenshots.html" hint="Screenshots">
   <navbar:button id=doc txt="Documentation" url="$(ROOT)/doc/index.html" hint="Documentation">
   <navbar:button id=download txt="Download" url="$(ROOT)/download.html" hint="Download">
+  <navbar:button id=development txt="Development" url="$(ROOT)/development.html" hint="Development">
   <navbar:button id=author txt="Contacting the Author" url="$(ROOT)/contact.html" hint="Contacting the Author">
 </navbar:define>
 
