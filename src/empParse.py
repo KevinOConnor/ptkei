@@ -473,57 +473,23 @@ map(operator.setitem,
 s_sectorName = (r"(?P<sectorName>"+
                 string.join(sectorDesignationConvert.values(), '|')+")")
 
-try:
-    # Ughh.  There is a bug in python 1.5.1 and earlier...
-    string.atoi('-')
-except ValueError:
-    # Correct version
-    def convertList(dlist):
-        """Convert a list of strings to native types."""
-        string__atof = string.atof
-        string__atoi = string.atoi
-        string__atol = string.atol
-        for i in range(len(dlist)):
-            val = dlist[i]
-            if '.' in val:
-                try:
-                    val = string__atof(val)
-                except ValueError:
-                    continue
-            else:
-                try:
-                    val = string__atoi(val)
-                except OverflowError:
-                    val = string__atol(val)
-                except ValueError:
-                    continue
-            dlist[i] = val
-else:
-    # Bug fix version
-    def convertList(dlist):
-        """Convert a list of strings to native types."""
-        string__atof = string.atof
-        string__atoi = string.atoi
-        string__atol = string.atol
-        bugtest = ('+', '-')
-        for i in range(len(dlist)):
-            val = dlist[i]
-            if val in bugtest:
-                # Python 1.5.1 bug - converts '+'/'-' to 0..
+def convertList(dlist):
+    """Convert a list of strings to native types."""
+    for i in range(len(dlist)):
+        val = dlist[i]
+        if '.' in val:
+            try:
+                val = string.atof(val)
+            except ValueError:
                 continue
-            if '.' in val:
-                try:
-                    val = string__atof(val)
-                except ValueError:
-                    continue
-            else:
-                try:
-                    val = string__atoi(val)
-                except OverflowError:
-                    val = string__atol(val)
-                except ValueError:
-                    continue
-            dlist[i] = val
+        else:
+            try:
+                val = string.atoi(val)
+            except OverflowError:
+                val = string.atol(val)
+            except ValueError:
+                continue
+        dlist[i] = val
 
 ###########################################################################
 #############################  Parse classes  #############################
