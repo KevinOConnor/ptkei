@@ -682,7 +682,6 @@ class CmdRefresh(baseCommand):
 
         if (not self.totalDump and
             'MOB_ACCESS' in empDb.megaDB['version']['enabledOptions']):
-            print 'Issuing a dump * mob'
             self.ioq.sock.AddHandler(empQueue.NormalHandler(
                 "dump * mob", self.out, pre=empQueue.QU_SYNC,
                 post=empQueue.QU_FORCEBURST)
