@@ -234,7 +234,7 @@ class mainWin:
         self.Root.update_idletasks()
         self.Root.pack_propagate(0)
         infoframe.pack_propagate(0)
-
+        InitFileHandler()
     #
     # Tk callbacks - Bindings for keypresses/mouse events:
     #
@@ -514,13 +514,13 @@ class mainWin:
 
     def startConn(self):
         """Login callback:  Establish the socket connection."""
-        viewer.Root.tk.createfilehandler(self.ioq,
-                                          Tkinter.tkinter.READABLE,
-                                          self.HandleSock)
+        viewer.Root.createfilehandler(self.ioq,
+                                      Tkinter.tkinter.READABLE,
+                                      self.HandleSock)
 
     def stopConn(self):
         """Login callback:  Disengage the socket connection."""
-        viewer.Root.tk.deletefilehandler(self.ioq)
+        viewer.Root.deletefilehandler(self.ioq)
 
     #
     # Misc. utilities:
@@ -753,19 +753,29 @@ elif os.name == 'nt':
 
 
 # Handle platforms that don't support the Tcl file handler
-if Tkinter.tkinter.createfilehandler is None:
-    print "PTkEI: Using emulated file handlers."
-    def bogusFileHandler(file, mask, hdlr):
-        global bogusFileTimer
-        def hdl(file=file, mask=mask, hdlr=hdlr):
-            if (file.fileno() is not None
-                and select.select([file], [], [], 0)[0]):
-                hdlr(file, mask)
-            bogusFileHandler(file, mask, hdlr)
-        bogusFileTimer = Tkinter.tkinter.createtimerhandler(50, hdl)
+def InitFileHandler():
+    global viewer
 
-    def bogusDelFileHandler(fileno):
-        bogusFileTimer.deletetimerhandler()
+    if Tkinter.tkinter.createfilehandler is None:
+        print "PTkEI: Using emulated file handlers."
+        def bogusFileHandler(file, mask, hdlr):
+            global bogusFileTimer
+            def hdl(file=file, mask=mask, hdlr=hdlr):
+                if (file.fileno() is not None
+                    and select.select([file], [], [], 0)[0]):
+                    hdlr(file, mask)
+                bogusFileHandler(file, mask, hdlr)
+            bogusFileTimer = viewer.Root.tk.createtimerhandler(50, hdl)
 
-    Tkinter.tkinter.createfilehandler = bogusFileHandler
-    Tkinter.tkinter.deletefilehandler = bogusDelFileHandler
+        def bogusDelFileHandler(fileno):
+            bogusFileTimer.deletetimerhandler()
+
+        viewer.Root.createfilehandler = bogusFileHandler
+        viewer.Root.deletefilehandler = bogusDelFileHandler
+        viewer.Root.createtimerhandler = viewer.Root.tk.createtimerhandler 
+    else:
+        viewer.Root.createfilehandler = viewer.Root.tk.createfilehandler
+        viewer.Root.deletefilehandler = viewer.Root.tk.deletefilehandler 
+        viewer.Root.createtimerhandler = viewer.Root.tk.createtimerhandler 
+    
+    
