@@ -112,6 +112,8 @@ class delayedBinding:
               +" return "+j+"(self.convertField())\n")
     def __init__(self, name):
         self.name = name
+    def __call__(self, *args, **kw):
+        return apply(self.convertField(), args, kw)
     def convertField(self):
         try:
             if callable(self.name):
@@ -143,7 +145,11 @@ def initializeSelectors():
 
         # Added identifier:
         ('sect', 3, (lambda ldb:
-                     ("%s,%s" % (ldb['x'], ldb['y']))))
+                     ("%s,%s" % (ldb['x'], ldb['y'])))),
+        # Function that reports sector distance -- distance(x,y)
+        ('distance', 8, (lambda ldb:
+                         (lambda x, y, __fromx=ldb['x'], __fromy=ldb['y']:
+                          (empDb.sectorDistance((__fromx, __fromy), (x, y))))))
         ]
 
     commodityConversion = [
@@ -289,7 +295,10 @@ s_realm = r"#(?P<realm>\d*)"
 s_sectors = (r"(?P<minX>"+empParse.ss_sect+")(?::(?P<maxX>"
              +empParse.ss_sect+"))?,(?P<minY>"+empParse.ss_sect
              +")(?::(?P<maxY>"+empParse.ss_sect+"))?")
-sectorsFormat = re.compile("^\*$|^"+s_realm+"$|^"+s_sectors+"$")
+s_circular = (r"@(?P<cirX>"+empParse.ss_sect+"),(?P<cirY>"+empParse.ss_sect
+              +"):(?P<cirD>\d+)")
+sectorsFormat = re.compile("^\*$|^"+s_realm+"$|^"+s_sectors
+                           +"$|^"+s_circular+"$")
 conditionsFormat = re.compile(
     r"^(?P<var>\S+?)(?P<opr>[=<>#])(?P<val>\S+?)(?:&(?P<next>\S+))?$")
 def selectToExpr(dbname, range, cond):
@@ -333,6 +342,9 @@ def selectToExpr(dbname, range, cond):
                                                mc.group('minY', 'maxY'))
         else:
             conditions.append("yl==" + mc.group('minY'))
+    elif mc.group('cirX'):
+        # Circular area
+        conditions = ["distance(%s,%s)<=%s" % mc.group('cirX', 'cirY', 'cirD')]
     else:
         # All ('*') selection
         conditions = []
