@@ -8,7 +8,7 @@
   <navbar:prolog type=N><p></navbar:prolog>
   <navbar:epilog type=N></p></navbar:epilog>
   <navbar:prolog type=S><p><strong></navbar:prolog>
-  <navbar:epilog type=S></p></strong></navbar:epilog>
+  <navbar:epilog type=S></strong></p></navbar:epilog>
   <navbar:button id=home txt="PTkEI" url="$(ROOT)/index.html" hint="PTkEI Home Page">
   <navbar:button id=news txt="What's new?" url="$(ROOT)/news.html" hint="What&#180;s new?">
   <navbar:button id=features txt="Features" url="$(ROOT)/features.html" hint="Features">
