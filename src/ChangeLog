@@ -1,3 +1,10 @@
+2003-06-10  Laurent Martin  <laurent@lfmm.org>
+
+	* empCmd.py(CmdRefresh): Added a neededDump string in CmdRefresh
+	objects that gets filled with sendRefresh strings found in the
+	following objects in the queue to ensure that a rdb command
+	happening before a smart command doesn't get pruned.
+
 2003-06-07  Laurent Martin  <laurent@lfmm.org>
 
 	* LoginWin.py, MapWin.py, Pmw.py, PmwBlt.py, Tk_List.py,
