@@ -1,3 +1,17 @@
+2003-03-20  Laurent Martin  <laurent@lfmm.org>
+
+	* empEval(selectToExpr): Added support for square ranges that
+	cross the map limit (e.g. 40:-20). 
+
+	* empEval(selectToExpr): Added support for circular ranges
+	"@x,y:d".
+
+	* empDb, empPath: Moved function hexDistance from empPath to empDb
+	renaming it sectorDistance.
+
+	* empTk(mainWin.__init__): Removed binding of button-2 from Output
+	window as it is now managed by the MyText widget.
+
 2003-03-19  Laurent Martin  <laurent@lfmm.org>
 
 	* empCmd(Cmd*): Added a commandUsage string that gets printed when
