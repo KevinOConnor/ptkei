@@ -294,7 +294,7 @@ class mainWin:
         end = win.search("[^-0-9,]|$", pos, regexp=1)
         mm = self.sectorFormat.search(win.get(start, end))
         if mm:
-            x, y = map(string.atoi, mm.groups())
+            x, y = map(int, mm.groups())
             self.cen.SetSect((x, x, y, y))
         else:
             self.Root.bell()
@@ -375,7 +375,7 @@ class mainWin:
         """empQueue handler: Handle a subprompt."""
         mm = self.sectorFormat.search(msg)
         if mm:
-            self.markSectors([map(string.atoi, mm.groups())], 'prompt')
+            self.markSectors([map(int, mm.groups())], 'prompt')
         self.msgQueue[len(self.msgQueue):] = [
             "\n", '', msg, 'flush']
         if hdl is not None:
@@ -639,12 +639,12 @@ class CmdDisp(empCmd.baseCommand):
 #            print vmin, vmax
 
             try:
-                uvmin = string.atoi(mm.group('vmin'))
+                uvmin = int(mm.group('vmin'))
             except:
                 uvmin = vmin
 
             try:
-                uvmax = string.atoi(mm.group('vmax'))
+                uvmax = int(mm.group('vmax'))
             except:
                 uvmax = vmax
 

@@ -450,8 +450,8 @@ class EmpTime:
         if year is None:
             year = self.guessYear
         else:
-            year = self.guessYear = string.atoi(year)
-        tt = tuple(map(string.atoi,
+            year = self.guessYear = int(year)
+        tt = tuple(map(int,
                        match.group('date', 'hour', 'minute', 'second')))
         tt = (year, self.Months[match.group('month')]) + tt + (
             self.Days[match.group('day')], 0, 0)
@@ -513,19 +513,19 @@ class EmpTime:
 ###########################################################################
 #############################  Useful functions ###########################
 
-# Check for broken string.atoi function.
+# Check for broken int function.
 try:
-    string.atoi('-')
+    int('-')
 except ValueError:
     # Working atoi
-    fixedAtoI = string.atoi
+    fixedAtoI = int
 else:
     # Broken atoi
     def fixedAtoI(s):
-        """Fixed string.atoi with +/- checking."""
+        """Fixed int with +/- checking."""
         if s == '+' or s == '-':
             raise ValueError
-        return string.atoi(s)
+        return int(s)
 
 #######  Tools for working with sectors.
 #######

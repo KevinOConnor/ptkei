@@ -44,7 +44,7 @@ class MyListbox(Tkinter.Listbox):
     def curselection(self):
         cs = Tkinter.Listbox.curselection(self)
         return map(operator.getitem, len(cs)*[self.datalist],
-                   map(string.atoi, cs))
+                   map(int, cs))
     def get(self, first, last=None):
         pf = self.index(first)
         if last is None:

@@ -126,7 +126,7 @@ class delayedBinding:
 ##  	    val = empDb.fixedAtoI(val)
 ##  	except ValueError:
 ##  	    try:
-##  		val = string.atof(val)
+##  		val = float(val)
 ##  	    except ValueError:
 ##  		pass
 ##  	except TypeError:
@@ -324,7 +324,7 @@ def selectToExpr(dbname, range, cond):
         if mc.group('realm') == "":
             rm = 0
         else:
-            rm = string.atoi(mc.group('realm'))
+            rm = int(mc.group('realm'))
         try: val = empDb.megaDB['realm'][rm]
         except KeyError:
             raise error, "Realm not in database."

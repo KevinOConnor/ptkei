@@ -79,7 +79,7 @@ def getCanvasObject(canvasWin, name, group):
     try:
         dict = getOption(canvasWin, name, group, ('type', 'coords'))
         type = dict['type']
-        coords = tuple(map(string.atof, string.split(dict['coords'])))
+        coords = tuple(map(float, string.split(dict['coords'])))
         options = getOption(canvasWin, name, group, canvasTypes[type])
         return (getattr(canvasWin, "create_"+type), coords, options)
     except (ValueError, KeyError):

@@ -463,7 +463,7 @@ class CmdAlias(baseCommand):
                             cmd = cmd + '$'
                         else:
                             try:
-                                cmd = cmd + argl[string.atoi(val)]
+                                cmd = cmd + argl[int(val)]
                             except IndexError:
                                 viewer.Error("Not enough arguments for alias.")
                                 return
@@ -729,7 +729,7 @@ class CmdEval(baseCommand):
             db = empDb.megaDB[type]
         else:
             type = 'SECTOR'
-            key = tuple(map(string.atoi, mm.group('sectorX', 'sectorY')))
+            key = tuple(map(int, mm.group('sectorX', 'sectorY')))
             try:
                 db = empDb.megaDB['SECTOR'][key]
             except KeyError:
@@ -960,9 +960,9 @@ class CmdNova(baseCommand):
         +"\s*(?:"+empParse.s_sector2+")?\s*$")
     def receive(self):
         mm = self.parameterMatch
-        start = map(string.atoi, mm.group('sectorX', 'sectorY'))
+        start = map(int, mm.group('sectorX', 'sectorY'))
         if mm.group('sector2X'):
-            dest = map(string.atoi, mm.group('sector2X', 'sector2Y'))
+            dest = map(int, mm.group('sector2X', 'sector2Y'))
         else:
             dest = start
         if dest == start:
@@ -1220,7 +1220,7 @@ def getMoveQuantity(txt, commodity, sectors):
         else:
             flag = 2
 
-    val = string.atoi(var)
+    val = int(var)
 
     # Check for reverse paths.
     if flag == 2:
@@ -1250,7 +1250,7 @@ def getMoveQuantity(txt, commodity, sectors):
 ##  	    self.out.flush(msg, hdl)
 ##  	else:
 ##  	    response = ""
-##  	    left = string.atoi(mm.group('left'))
+##  	    left = int(mm.group('left'))
 ##  	    if len(self.msg) == 0:
 ##  		response = "."
 ##  	    elif len(self.msg[0]) > left:

@@ -112,7 +112,7 @@ class Curses:
             while 1:
                 t = raw_input("port[%s]: " % ldb['port'])
                 if t:
-                    try: t = string.atoi(t)
+                    try: t = int(t)
                     except ValueError:
                         continue
                     ldb['port'] = t

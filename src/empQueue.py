@@ -833,7 +833,7 @@ class NormalHandler:
                 viewer.flash(i)
             del self.msgqueue[:]
             ndb = empDb.megaDB['prompt']
-            ndb['minutes'], ndb['BTU'] = map(string.atoi, string.split(msg))
+            ndb['minutes'], ndb['BTU'] = map(int, string.split(msg))
             self.out.End(self.command)
 ##	elif msg[0] == C_REDIR:
 ##	    print "PE: Server Redirect requested:", msg[2:]

@@ -232,8 +232,8 @@ def sectToCoords(s, field):
     """Convert a string of the form 'x,y' to its x and y values."""
     try:
         idx = string.index(s, ',')
-        return {'x':string.atoi(s[:idx]),
-                'y':string.atoi(s[idx+1:])}
+        return {'x':int(s[:idx]),
+                'y':int(s[idx+1:])}
     except ValueError:
         return {}
 
@@ -404,22 +404,22 @@ def getLookInfo(line, unitType = 'UNKNOWN'):
         own = CN_OWNED
     else:
         own = empDb.megaDB['countries'].resolveNameId(
-            mm.group('counName'), string.atoi(own))
+            mm.group('counName'), int(own))
         
     if found == 1:
         # A ship
-        x, y, id = map(string.atoi,
+        x, y, id = map(int,
                        mm.group('sectorX', 'sectorY', 'shipId'))
         empDb.megaDB['SHIPS'].updates([
             {'id': id, 'type':mm.group('shipType'),
              'x': x, 'y': y, 'owner':own}])
     elif found == 2:
-        x, y, id = map(string.atoi, mm.group('sectorX', 'sectorY', 'landId'))
+        x, y, id = map(int, mm.group('sectorX', 'sectorY', 'landId'))
         empDb.megaDB['LAND UNITS'].updates([
             {'id': id, 'type':mm.group('landType'),
              'x': x, 'y': y, 'owner':own}])
     elif found == 3:
-        x, y, id = map(string.atoi, mm.group('sectorX', 'sectorY', 'planeId'))
+        x, y, id = map(int, mm.group('sectorX', 'sectorY', 'planeId'))
         empDb.megaDB['PLANES'].updates([
             {'id': id, 'type':mm.group('planeType'),
              'x': x, 'y': y, 'owner':own}])
@@ -427,7 +427,7 @@ def getLookInfo(line, unitType = 'UNKNOWN'):
         lst = {'civ':0, 'mil':0}
         composePreamble(lst, look_stats, mm.group('sectorStats'),
                         {'civ':zeroIsOne, 'mil':zeroIsOne})
-        x, y, eff = map(string.atoi,
+        x, y, eff = map(int,
                         mm.group('sectorX', 'sectorY', 'eff'))
         lst.update({'des': sectorNameConvert[mm.group('sectorName')],
                     'eff': eff, 'owner': own,
@@ -479,14 +479,14 @@ def convertList(dlist):
         val = dlist[i]
         if '.' in val:
             try:
-                val = string.atof(val)
+                val = float(val)
             except ValueError:
                 continue
         else:
             try:
-                val = string.atoi(val)
+                val = int(val)
             except OverflowError:
-                val = string.atol(val)
+                val = long(val)
             except ValueError:
                 continue
         dlist[i] = val
@@ -494,7 +494,7 @@ def convertList(dlist):
 ###########################################################################
 #############################  Parse classes  #############################
 s_time = empDb.s_time
-atoi = string.atoi
+atoi = int
 curtimeFormat = re.compile("^"+s_time+"$")
 
 
@@ -547,7 +547,7 @@ class ParseDump(baseDisp):
                 tp = mtch.group('dumpName')
                 self.lost = (tp == 'LOST ITEMS')
                 self.DB = empDb.megaDB[tp]
-                ts = string.atoi(mtch.group('timeStamp'))
+                ts = int(mtch.group('timeStamp'))
 ##                 empDb.megaDB['time'].noteTimestamp(self.ctime, float(ts))
                 if self.sett:
                     # It is possible for the server to process a command
@@ -713,7 +713,7 @@ class ParseMap(baseDisp):
             if self.Mpos == 1:
                 # First line of data - convert alphanumeric columns to numeric
                 self.Mpos = 2
-                cols = map(string.atoi, self.Mhead)
+                cols = map(int, self.Mhead)
                 if len(cols) == 1:
                     # Can't accurately parse maps with 1 column
                     self.Mpos = -1
@@ -732,7 +732,7 @@ class ParseMap(baseDisp):
                 # Ignore line
                 return
             # Must be a data line
-            row = string.atoi(msg_a)
+            row = int(msg_a)
             # Parse map
             oddstart = (row & 1) ^ self.oddcol
             for i in range(oddstart, len(self.Mhead), 2):
@@ -754,7 +754,7 @@ class ParseMove(baseDisp):
     def data(self, msg):
         mm = self.ownSector.match(msg)
         if mm:
-            x, y = map(string.atoi, mm.group('sectorX', 'sectorY'))
+            x, y = map(int, mm.group('sectorX', 'sectorY'))
             empDb.megaDB['SECTOR'].updates(
                 [{'x': x, 'y': y, 'owner':CN_OWNED}])
         self.map.append(msg)
@@ -771,7 +771,7 @@ class ParseMove(baseDisp):
             sects = []
             for i in self.map[-3:]:
                 sects.append(i[3:8])
-            coord = map(string.atoi, mm.group('sectorX', 'sectorY'))
+            coord = map(int, mm.group('sectorX', 'sectorY'))
             parseStarMap(sects, coord, '')
 
 s_landIdent = r"(?P<landType>\S+)(?:.+)? #(?P<landId>\d+)"
@@ -836,7 +836,7 @@ class ParseUnits(baseDisp):
                 else:
                     own = CN_ENEMY
                     type = item[0]
-            x,y,id = map(string.atoi,mm.group('sectorX', 'sectorY',
+            x,y,id = map(int,mm.group('sectorX', 'sectorY',
                                               'shipId'))
             owner = empDb.megaDB['countries'].resolveName(
                 own, 'SHIPS', (id,))
@@ -849,7 +849,7 @@ class ParseUnits(baseDisp):
         if mm:
             own = CN_ENEMY
             if mm.group('shipId'):
-                x,y,id = map(string.atoi,mm.group('sectorX', 'sectorY',
+                x,y,id = map(int,mm.group('sectorX', 'sectorY',
                                                   'shipId'))
                 empDb.megaDB['SHIPS'].updates([
                     {'id': id, 'type': 'sb',
@@ -882,8 +882,8 @@ class ParseUnits(baseDisp):
         # Check for start of radar
         mm = self.start_radar.match(msg)
         if mm:
-            self.coord = map(string.atoi, mm.group('sectorX', 'sectorY'))
-            self.num = string.atoi(mm.group('dist'))*2+1
+            self.coord = map(int, mm.group('sectorX', 'sectorY'))
+            self.num = int(mm.group('dist'))*2+1
             self.Map = []
             return
         # Check for view
@@ -892,7 +892,7 @@ class ParseUnits(baseDisp):
             lst = {}
             composePreamble(lst, self.view_stats, mm.group('viewStats'),
                             {'oil':'ocontent','fert':'fert'})
-            x, y, eff = map(string.atoi,
+            x, y, eff = map(int,
                             mm.group('sectorX', 'sectorY', 'eff'))
             lst.update({'des': sectorNameConvert[mm.group('sectorName')],
                         'eff': eff, 'owner': CN_OWNED, 'x': x, 'y': y})
@@ -908,14 +908,14 @@ class ParseUnits(baseDisp):
         if mm:
             if mm.group('shipId'):
                 # A ship
-                x, y, id = map(string.atoi,
+                x, y, id = map(int,
                                mm.group('sectorX', 'sectorY', 'shipId'))
                 empDb.megaDB['SHIPS'].updates(
                     [{'id': id, 'type':mm.group('shipType'),
                       'owner':CN_OWNED, 'x': x, 'y': y}])
             else:
                 # A land unit
-                x, y, id = map(string.atoi,
+                x, y, id = map(int,
                                mm.group('sectorX', 'sectorY', 'landId'))
                 empDb.megaDB['LAND UNITS'].updates(
                     [{'id': id, 'type':mm.group('landType'),
@@ -932,7 +932,7 @@ class ParseUnits(baseDisp):
         self.out.flush(msg, hdl)
         mm = self.nav_prompt.match(msg)
         if mm:
-            self.coord = map(string.atoi, mm.group('sectorX', 'sectorY'))
+            self.coord = map(int, mm.group('sectorX', 'sectorY'))
             if len(self.Map) == 3:
                 parseStarMap(self.Map, self.coord, 'radar')
 
@@ -1042,7 +1042,7 @@ class ParseSpy(baseDisp):
                 lst = {}
                 composePreamble(lst, self.unitStats, mt.group('unitStats'))
                 lst['x'], lst['y'], id = map(
-                    string.atoi,
+                    int,
                     mt.group('sectorX', 'sectorY', 'landId'))
                 lst['id'] = id
                 lst['type'] = mt.group('landType')
@@ -1077,7 +1077,7 @@ class ParseAttack(baseDisp):
         self.out.data(msg)
         mm = self.attackInfo.match(msg)
         if mm:
-            x, y, eff, mil = map(string.atoi,
+            x, y, eff, mil = map(int,
                                  mm.group('sectorX', 'sectorY', 'eff', 'mil'))
             empDb.megaDB['SECTOR'].updates([{
                 'x': x, 'y': y,
@@ -1088,13 +1088,13 @@ class ParseAttack(baseDisp):
             return
         mm = self.sectorTake.match(msg)
         if mm:
-            x, y = map(string.atoi, mm.group('sectorX', 'sectorY'))
+            x, y = map(int, mm.group('sectorX', 'sectorY'))
             empDb.megaDB['SECTOR'].updates([{
                 'x': x, 'y': y, 'owner': CN_OWNED}])
             return
         mm = self.unitMove.match(msg)
         if mm:
-            x, y, id = map(string.atoi,
+            x, y, id = map(int,
                            mm.group('sectorX', 'sectorY', 'landId'))
             empDb.megaDB['LAND UNITS'].updates([{
                 'id': id, 'type':mm.group('landType'),
@@ -1102,7 +1102,7 @@ class ParseAttack(baseDisp):
             return
         mm = self.milMove.match(msg)
         if mm:
-            x, y, mil = map(string.atoi,
+            x, y, mil = map(int,
                             mm.group('sectorX', 'sectorY', 'mil'))
             empDb.megaDB['SECTOR'].updates([{
                 'x': x, 'y': y, 'owner':CN_OWNED, 'mil': mil}])
@@ -1158,8 +1158,8 @@ class ParseSate(baseDisp):
         elif self.pos == 1:
             mm = self.rangeLine.match(msg)
             if mm:
-                self.coord = map(string.atoi, mm.group('sectorX', 'sectorY'))
-                self.range = string.atoi(mm.group('range'))*2+1
+                self.coord = map(int, mm.group('sectorX', 'sectorY'))
+                self.range = int(mm.group('range'))*2+1
                 self.pos = 2
         elif self.pos == 2:
             if msg == "Satellite radar report":
@@ -1183,18 +1183,18 @@ class ParseSate(baseDisp):
             else:
                 val = sectToCoords(item[0], '')
                 val['des'] = item[1]
-                val['owner'] = empDb.megaDB['countries'].resolveId(string.atoi(item[2]))
-                val['eff'] = string.atoi(item[3])
-                val['road'] = string.atoi(item[4])
-                val['rail'] = string.atoi(item[5])
-                val['defense'] = string.atoi(item[6])
-                val['civ'] = string.atoi(item[7])
-                val['mil'] = string.atoi(item[8])
-                val['shell'] = string.atoi(item[9])
-                val['gun'] = string.atoi(item[10])
-                val['iron'] = string.atoi(item[11])
-                val['pet'] = string.atoi(item[12])
-                val['food'] = string.atoi(item[13])
+                val['owner'] = empDb.megaDB['countries'].resolveId(int(item[2]))
+                val['eff'] = int(item[3])
+                val['road'] = int(item[4])
+                val['rail'] = int(item[5])
+                val['defense'] = int(item[6])
+                val['civ'] = int(item[7])
+                val['mil'] = int(item[8])
+                val['shell'] = int(item[9])
+                val['gun'] = int(item[10])
+                val['iron'] = int(item[11])
+                val['pet'] = int(item[12])
+                val['food'] = int(item[13])
                 empDb.megaDB['SECTOR'].updates([val])
         elif self.pos == 5: # ships
             item = string.split(string.strip(msg))
@@ -1202,10 +1202,10 @@ class ParseSate(baseDisp):
                 self.pos = 2
             else:
                 val = sectToCoords(item[-2], '')
-                val['owner'] = empDb.megaDB['countries'].resolveId(string.atoi(item[0]))
-                val['id'] = string.atoi(item[1])
+                val['owner'] = empDb.megaDB['countries'].resolveId(int(item[0]))
+                val['id'] = int(item[1])
                 val['type'] = item[2]
-                val['eff'] = string.atoi(item[-1][:-1])
+                val['eff'] = int(item[-1][:-1])
                 empDb.megaDB['SHIPS'].updates([val])
         elif self.pos == 6: # land units
             item = string.split(string.strip(msg))
@@ -1213,10 +1213,10 @@ class ParseSate(baseDisp):
                 self.pos = 2
             else:
                 val = sectToCoords(item[-2], '')
-                val['owner'] = empDb.megaDB['countries'].resolveId(string.atoi(item[0]))
-                val['id'] = string.atoi(item[1])
+                val['owner'] = empDb.megaDB['countries'].resolveId(int(item[0]))
+                val['id'] = int(item[1])
                 val['type'] = item[2]
-                val['eff'] = string.atoi(item[-1][:-1])
+                val['eff'] = int(item[-1][:-1])
                 empDb.megaDB['LAND UNITS'].updates([val])
 
 class ParseBuild(baseDisp):
@@ -1233,7 +1233,7 @@ class ParseBuild(baseDisp):
             if mm.group('shipId'):
                 # A ship
                 x, y, id = map(
-                    string.atoi,
+                    int,
                     mm.group('sectorX', 'sectorY', 'shipId'))
                 empDb.megaDB['SHIPS'].updates(
                     [{'id': id, 'type':mm.group('shipType'),
@@ -1252,7 +1252,7 @@ class ParseBuild(baseDisp):
                     des = '@'
                 else:
                     des = '='
-                x, y = map(string.atoi, mm.group('sectorX', 'sectorY'))
+                x, y = map(int, mm.group('sectorX', 'sectorY'))
                 empDb.megaDB['SECTOR'].updates(
                     [{'owner':0, 'x': x, 'y': y, 'des':des}])
 
@@ -1267,9 +1267,9 @@ class ParseCapital(baseDisp):
         mm = self.moveCapital.match(msg)
         if mm:
             if mm.group('sectorX') is not None:
-                loc = tuple(map(string.atoi, mm.group('sectorX', 'sectorY')))
+                loc = tuple(map(int, mm.group('sectorX', 'sectorY')))
             else:
-                loc = tuple(map(string.atoi, mm.group('sector2X', 'sector2Y')))
+                loc = tuple(map(int, mm.group('sector2X', 'sector2Y')))
             checkUpdated('nation', 'capital', loc)
 
 class ParseReport(baseDisp):
@@ -1284,7 +1284,7 @@ class ParseReport(baseDisp):
         self.out.data(msg)
         line = string.split(msg)
         try:
-            id = string.atoi(line[0])
+            id = int(line[0])
         except ValueError:
             pass
         else:
@@ -1306,7 +1306,7 @@ class ParseRelations(baseDisp):
         mm = self.line.match(msg)
         if mm:
             empDb.megaDB['countries'].resolveNameId(mm.group('counName'),
-                string.atoi(mm.group('counId')))
+                int(mm.group('counId')))
 
 class ParseRealm(baseDisp):
     """Parse output from realm command."""
@@ -1320,7 +1320,7 @@ class ParseRealm(baseDisp):
         self.out.data(msg)
         mtch = self.rm.match(msg)
         if mtch:
-            vals = tuple(map(string.atoi, mtch.groups()))
+            vals = tuple(map(int, mtch.groups()))
             realm = vals[0]
             vals = vals[1:]
             checkUpdated('realm', realm, vals)
@@ -1351,7 +1351,7 @@ class ParseTele(baseDisp):
         try:
             mm = self.prompt.match(msg)
             if mm:
-                left = string.atoi(mm.group('left'))
+                left = int(mm.group('left'))
                 if self.max is None:
                     self.max = left
                 self.pos = self.max - left
@@ -1415,7 +1415,7 @@ class ParseRead(baseDisp):
                 counId = mm.group('counId')
                 if counId is not None:
                     counId = empDb.megaDB['countries'].resolveNameId(
-                        mm.group('counName'), string.atoi(counId))
+                        mm.group('counName'), int(counId))
                 msg = (mm.group('type'), counId,
                        empDb.megaDB['time'].translateTime(mm))
             # Check if this message is a duplicate.
@@ -1573,78 +1573,78 @@ class ParseVersion(baseDisp):
              'Omax', 'Omob', 'Oeff', 'fire', 'goOptions', 'goNoOptions')
         if maxX is not None:
             checkUpdated('version', 'worldsize',
-                         (string.atoi(maxX), string.atoi(maxY)))
+                         (int(maxX), int(maxY)))
         elif coun is not None:
-            checkUpdated('version', 'maxCountries', string.atoi(coun))
+            checkUpdated('version', 'maxCountries', int(coun))
         elif etu is not None:
-            checkUpdated('version', 'ETUSeconds', string.atoi(etu))
+            checkUpdated('version', 'ETUSeconds', int(etu))
         elif date is not None:
             empDb.megaDB['time'].noteTime(mm)
         elif updt is not None:
-            checkUpdated('version', 'updateETUs', string.atoi(updt))
+            checkUpdated('version', 'updateETUs', int(updt))
         elif minutes is not None:
-            checkUpdated('version', 'minutesOnline', string.atoi(minutes))
+            checkUpdated('version', 'minutesOnline', int(minutes))
         elif btu is not None:
-            checkUpdated('version', 'BTURate', string.atof(btu))
+            checkUpdated('version', 'BTURate', float(btu))
         elif grow is not None:
-            checkUpdated('version', 'growRate', string.atof(grow))
+            checkUpdated('version', 'growRate', float(grow))
         elif harv is not None:
-            checkUpdated('version', 'harvestRate', string.atof(harv)/1000.0)
+            checkUpdated('version', 'harvestRate', float(harv)/1000.0)
         elif birth is not None:
-            checkUpdated('version', 'birthRate', string.atof(birth)/1000.0)
+            checkUpdated('version', 'birthRate', float(birth)/1000.0)
         elif ubirth is not None:
-            checkUpdated('version', 'UBirthRate', string.atof(ubirth)/1000.0)
+            checkUpdated('version', 'UBirthRate', float(ubirth)/1000.0)
         elif eat is not None:
-            checkUpdated('version', 'eatRate', string.atof(eat)/1000.0)
+            checkUpdated('version', 'eatRate', float(eat)/1000.0)
         elif baby is not None:
-            checkUpdated('version', 'BEatRate', string.atof(baby)/1000.0)
+            checkUpdated('version', 'BEatRate', float(baby)/1000.0)
         elif interest is not None:
             checkUpdated('version', 'barInterest',
-                         string.atof(interest)/1000.0)
+                         float(interest)/1000.0)
         elif tax is not None:
-            checkUpdated('version', 'civTax', string.atof(tax)/1000.0)
+            checkUpdated('version', 'civTax', float(tax)/1000.0)
         elif utax is not None:
-            checkUpdated('version', 'UWTax', string.atof(utax)/1000.0)
+            checkUpdated('version', 'UWTax', float(utax)/1000.0)
         elif milcost is not None:
-            checkUpdated('version', 'milCost', string.atof(milcost)/1000.0)
+            checkUpdated('version', 'milCost', float(milcost)/1000.0)
         elif rescost is not None:
-            checkUpdated('version', 'reserveCost', string.atof(rescost)/1000.0)
+            checkUpdated('version', 'reserveCost', float(rescost)/1000.0)
         elif stroll is not None:
-            checkUpdated('version', 'happyRatio', string.atoi(stroll))
+            checkUpdated('version', 'happyRatio', int(stroll))
         elif grad is not None:
-            checkUpdated('version', 'educationRatio', string.atoi(grad))
+            checkUpdated('version', 'educationRatio', int(grad))
         elif havg is not None:
-            checkUpdated('version', 'happyAverage', string.atoi(havg))
+            checkUpdated('version', 'happyAverage', int(havg))
         elif eavg is not None:
-            checkUpdated('version', 'educationAverage', string.atoi(eavg))
+            checkUpdated('version', 'educationAverage', int(eavg))
         elif boost is not None:
-            checkUpdated('version', 'techBoost', string.atof(boost))
+            checkUpdated('version', 'techBoost', float(boost))
         elif decline is not None:
-            checkUpdated('version', 'levelDecline', string.atoi(decline))
+            checkUpdated('version', 'levelDecline', int(decline))
         elif tbase is not None:
-            checkUpdated('version', 'techLog', string.atof(tbase))
+            checkUpdated('version', 'techLog', float(tbase))
         elif tafter is not None:
-            checkUpdated('version', 'techBase', string.atof(tafter))
+            checkUpdated('version', 'techBase', float(tafter))
         elif Omax is not None:
             val = []
             for i in string.split(Omax):
                 if i == '--': val.append(99999)
-                else: val.append(string.atoi(i))
+                else: val.append(int(i))
             checkUpdated('version', 'objectMax', val)
         elif Omob is not None:
             val = []
             for i in string.split(Omob):
                 if i == '--': val.append(99999)
-                else: val.append(string.atoi(i))
+                else: val.append(int(i))
             checkUpdated('version', 'objectMob', val)
         elif Oeff is not None:
             val = []
             for i in string.split(Oeff):
                 if i == '--': val.append(99999)
-                else: val.append(string.atoi(i))
+                else: val.append(int(i))
             checkUpdated('version', 'objectEff', val)
         elif fire is not None:
-            checkUpdated('version', 'fireRange', string.atof(fire))
+            checkUpdated('version', 'fireRange', float(fire))
         elif goOptions is not None:
             self.opts = []
             self.pos = 1
@@ -1700,37 +1700,37 @@ class ParseNation(baseDisp):
         if counId is not None:
             empDb.megaDB['time'].noteTime(mm)
             empDb.megaDB['countries'].resolvePlayer(
-                counName, string.atoi(counId))
+                counName, int(counId))
         elif status is not None:
             checkUpdated('nation', 'status', status)
         elif eff is not None:
             checkUpdated('nation', 'capital',
-                         (string.atoi(sectorX), string.atoi(sectorY)))
+                         (int(sectorX), int(sectorY)))
             empDb.megaDB['SECTOR'].updates([{
-                'x':string.atoi(sectorX), 'y':string.atoi(sectorY),
-                'eff': string.atoi(eff), 'mil':string.atoi(cmil),
-                'civ': string.atoi(cciv)}])
+                'x':int(sectorX), 'y':int(sectorY),
+                'eff': int(eff), 'mil':int(cmil),
+                'civ': int(cciv)}])
         elif sector2X is not None:
             checkUpdated('nation', 'capital', ())
         elif bud is not None:
-            checkUpdated('nation', 'budget', string.atof(bud))
-            checkUpdated('nation', 'reserves', string.atoi(resv))
+            checkUpdated('nation', 'budget', float(bud))
+            checkUpdated('nation', 'reserves', int(resv))
         elif edu is not None:
-            checkUpdated('nation', 'education', string.atof(edu))
-            checkUpdated('nation', 'happiness', string.atof(hap))
+            checkUpdated('nation', 'education', float(edu))
+            checkUpdated('nation', 'happiness', float(hap))
         elif tech is not None:
-            checkUpdated('nation', 'technology', string.atof(tech))
-            checkUpdated('nation', 'research', string.atof(res))
+            checkUpdated('nation', 'technology', float(tech))
+            checkUpdated('nation', 'research', float(res))
         elif tfact is not None:
-            checkUpdated('nation', 'techFactor', string.atof(tfact))
-            checkUpdated('nation', 'plagueFactor', string.atof(pfact))
+            checkUpdated('nation', 'techFactor', float(tfact))
+            checkUpdated('nation', 'plagueFactor', float(pfact))
         elif pop is not None:
-            checkUpdated('nation', 'maxPopulation', string.atoi(pop))
+            checkUpdated('nation', 'maxPopulation', int(pop))
         elif civs is not None:
-            checkUpdated('nation', 'maxCiv', string.atoi(civs))
-            checkUpdated('nation', 'maxUW', string.atoi(uws))
+            checkUpdated('nation', 'maxCiv', int(civs))
+            checkUpdated('nation', 'maxUW', int(uws))
         elif nhap is not None:
-            checkUpdated('nation', 'happyNeeded', string.atof(nhap))
+            checkUpdated('nation', 'happyNeeded', float(nhap))
 
 class ParseUpdate(baseDisp):
     """Parser for the update command.
@@ -1806,7 +1806,7 @@ class ParseSpyPlane(baseDisp):
             else:
                 info = self.seaSect.match(msg)
                 if info:
-                    x, y = map(string.atoi, info.group('sectorX', 'sectorY'))
+                    x, y = map(int, info.group('sectorX', 'sectorY'))
                     info = {'owner': 0, 'des': '.', 'x': x, 'y': y}
                     self.sect_changes.append(info)
 # for some reason spy planes can't see ships at sea. is this a server bug?
@@ -1826,7 +1826,7 @@ class ParseSpyPlane(baseDisp):
         elif self.mode == 5:
             info = self.uStats.match(msg)
             if info:
-                id, x, y, owner, eff = map(string.atoi,
+                id, x, y, owner, eff = map(int,
                                            info.group('id', 'sectorX',
                                                       'sectorY', 'own', 'eff'))
                 if owner == empDb.megaDB['countries'].player:
@@ -1840,7 +1840,7 @@ class ParseSpyPlane(baseDisp):
         elif self.mode == 6:
             info = self.uStats.match(msg)
             if info:
-                id, x, y, owner, eff = map(string.atoi,
+                id, x, y, owner, eff = map(int,
                                            info.group('id', 'sectorX',
                                                       'sectorY', 'own', 'eff'))
                 if owner == empDb.megaDB['countries'].player:
@@ -1867,7 +1867,7 @@ class ParseFire(baseDisp):
         self.out.data(msg)
         mm = self.line.match(msg)
         if mm:
-            id = string.atoi(mm.group('shipId'))
+            id = int(mm.group('shipId'))
             empDb.megaDB['SHIPS'].updates([
                 {'id': id, 'owner': CN_UNOWNED}])
 
@@ -1901,10 +1901,10 @@ class ParseShow(baseDisp):
             if len(msg) < 2 or msg[0] == ' ' or msg[1] != ' ':
                 return
             item = string.split(msg)
-            empDb.megaDB['sectortype'][item[0]]['cost_to_des'] =  string.atoi(item[1])
-            empDb.megaDB['sectortype'][item[0]]['cost_eff'] =  string.atoi(item[2])
-            empDb.megaDB['sectortype'][item[0]]['lcm_eff'] =  string.atoi(item[3])
-            empDb.megaDB['sectortype'][item[0]]['hcm_eff'] =  string.atoi(item[4])
+            empDb.megaDB['sectortype'][item[0]]['cost_to_des'] =  int(item[1])
+            empDb.megaDB['sectortype'][item[0]]['cost_eff'] =  int(item[2])
+            empDb.megaDB['sectortype'][item[0]]['lcm_eff'] =  int(item[3])
+            empDb.megaDB['sectortype'][item[0]]['hcm_eff'] =  int(item[4])
             return
         if self.what == 'sest':
             global sectorDesignationConvert, sectorNameConvert, s_sectorName, look_info
@@ -1922,14 +1922,14 @@ class ParseShow(baseDisp):
             for x in item[1:] :
                 name = name + " " + x
             empDb.megaDB['sectortype'][type] = {
-                'mcost': string.atof(mcost),
+                'mcost': float(mcost),
                 'name': name,
-                'pack_mil': string.atoi(pack_mil),
-                'pack_uw': string.atoi(pack_uw),
-                'pack_civ': string.atoi(pack_civ),
-                'pack_bar': string.atoi(pack_bar),
-                'pack_other': string.atoi(pack_other),
-                'maxpop': string.atoi(maxpop) }
+                'pack_mil': int(pack_mil),
+                'pack_uw': int(pack_uw),
+                'pack_civ': int(pack_civ),
+                'pack_bar': int(pack_bar),
+                'pack_other': int(pack_other),
+                'maxpop': int(maxpop) }
             if not sectorDesignationConvert.has_key(type) \
                or sectorDesignationConvert[type] != name :
                 sectorDesignationConvert[type] = name
@@ -1963,7 +1963,7 @@ class ParseShow(baseDisp):
                 comout = item[-1]
                 del item[-1:]
 
-            minlevel, lag, eff, cost, dep = map(string.atoi, item[-5:])
+            minlevel, lag, eff, cost, dep = map(int, item[-5:])
             del item[-5:]
 
             des = item[0]
@@ -1972,7 +1972,7 @@ class ParseShow(baseDisp):
             i = 0
             while i < len(item):
                 try:
-                    a = string.atoi(item[i])
+                    a = int(item[i])
                     break
                 except:
                     i = i + 1
@@ -1985,7 +1985,7 @@ class ParseShow(baseDisp):
                 i = 0
                 while i < len(item):
                     try:
-                        amount = string.atoi(item[i])
+                        amount = int(item[i])
                         use.append((amount, item[i+1]))
                         i = i + 2
                     except:
@@ -2012,11 +2012,11 @@ class ParseShow(baseDisp):
             if not empDb.megaDB['planetype'].has_key(type) :
                 empDb.megaDB['planetype'][type] = {
                     'name': name,
-                    'lcm': string.atoi(lcm),
-                    'hcm': string.atoi(hcm),
-                    'mil': string.atoi(crew),
-                    'avail': string.atoi(avail),
-                    'tech': string.atoi(tech) }
+                    'lcm': int(lcm),
+                    'hcm': int(hcm),
+                    'mil': int(crew),
+                    'avail': int(avail),
+                    'tech': int(tech) }
             return
         if self.what == 'shbu':
             item = string.split(msg)
@@ -2030,10 +2030,10 @@ class ParseShow(baseDisp):
             if not empDb.megaDB['shiptype'].has_key(type) :
                 empDb.megaDB['shiptype'][type] = {
                     'name': name,
-                    'lcm': string.atoi(lcm),
-                    'hcm': string.atoi(hcm),
-                    'avail': string.atoi(avail),
-                    'tech': string.atoi(tech) }
+                    'lcm': int(lcm),
+                    'hcm': int(hcm),
+                    'avail': int(avail),
+                    'tech': int(tech) }
             return
         if self.what == 'labu':
             item = string.split(msg)
@@ -2047,11 +2047,11 @@ class ParseShow(baseDisp):
             if not empDb.megaDB['landtype'].has_key(type) :
                 empDb.megaDB['landtype'][type] = {
                     'name': name,
-                    'lcm': string.atoi(lcm),
-                    'hcm': string.atoi(hcm),
-                    'gun': string.atoi(gun),
-                    'avail': string.atoi(avail),
-                    'tech': string.atoi(tech) }
+                    'lcm': int(lcm),
+                    'hcm': int(hcm),
+                    'gun': int(gun),
+                    'avail': int(avail),
+                    'tech': int(tech) }
             return
 
 ###########################################################################
@@ -2099,7 +2099,7 @@ def findCmd(lst, cmd):
 
 def str2Coords(s):
     idx = string.index(s, ',')
-    return (string.atoi(s[:idx]), string.atoi(s[idx+1:]))
+    return (int(s[:idx]), int(s[idx+1:]))
 
 def checkUpdated(dbname, item, val):
     """Update the value in the main/update databases iff a change is made."""

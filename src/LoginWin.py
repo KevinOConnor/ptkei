@@ -125,7 +125,7 @@ class loginWin:
 
     def setDBValues(self):
         """Set the database login values from the login window."""
-        port = string.atoi(self.Port.get())
+        port = int(self.Port.get())
         vals = {'host':self.Host.get(), 'port':port,
                 'coun':self.Coun.get(),	'repr':self.Rep.get()}
         loginDb = empDb.megaDB['login']

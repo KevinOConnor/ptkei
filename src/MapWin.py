@@ -88,7 +88,7 @@ class mapSubWin:
 
         # getting Default Mapsize from "TkOption"
         try:
-            self.gridsize = map(string.atof, string.split(
+            self.gridsize = map(float, string.split(
                 self.Map.option_get("defaultSize", "")))
             self.gridsize[1] = self.gridsize[1] * 3.0/2.0
         except (ValueError, IndexError):
@@ -96,7 +96,7 @@ class mapSubWin:
 
         # getting default for when to start the Combat Mode, when zooming
         try:
-            self.combatModeStartSize = map(string.atof, string.split(
+            self.combatModeStartSize = map(float, string.split(
                 self.Map.option_get("combatModeStartSize", "")))
             self.combatModeStartSize[1] = self.combatModeStartSize[1] * 3.0/2.0
         except (ValueError, IndexError):
@@ -157,7 +157,7 @@ class mapSubWin:
             return
         xview = self.Map.xview()
         yview = self.Map.yview()
-        win = map(string.atof, string.split(self.Map['scrollregion']))
+        win = map(float, string.split(self.Map['scrollregion']))
         scrWidth, scrHeight = win[2]-win[0], win[3]-win[1]
         self.Map.xview('moveto', xview[0]
                        +(self.dimen[0]-new[0])/2.0/scrWidth)
@@ -172,7 +172,7 @@ class mapSubWin:
 
     def see(self, coord):
         """If COORD isn't currently viewable, scroll window so that it is."""
-        win = map(string.atof, string.split(self.Map['scrollregion']))
+        win = map(float, string.split(self.Map['scrollregion']))
         scrWidth, scrHeight = win[2]-win[0], win[3]-win[1]
         xview = self.Map.xview()
         yview = self.Map.yview()
@@ -209,7 +209,7 @@ class mapSubWin:
         self.origin = (-loc[0], -loc[1])
 
         # Redisplay sectors without forcing a redraw.
-        win = map(string.atof, string.split(self.Map['scrollregion']))
+        win = map(float, string.split(self.Map['scrollregion']))
         scrWidth, scrHeight = win[2], win[3]
         self.Map.addtag_enclosed('move_a',
                                  -99999, -99999,
