@@ -601,6 +601,8 @@ class CmdDisp(empCmd.baseCommand):
 
     defaultBinding = (('Disp', 4),)
 
+    commandUsage = ("Disp [<commodity> <sectors>"
+                    " [min <min value>] [max <max value>]]")
     commandFormat = re.compile(
 	r"^(?P<comm>\S+)\s+(?P<sectors>\S+)(?:\s+\?(?P<selectors>\S+))?(\s+min\s+(?P<vmin>\d+))?(\s+max\s+(?P<vmax>\d+))?\s*$|^$")
     def receive(self):
@@ -673,6 +675,7 @@ class CmdSect(empCmd.baseCommand):
 
     defaultBinding = (('Sect', 4),)
 
+    commandUsage = "Sect [<sectors>]"
     commandFormat = re.compile(
         r"^(?P<sectors>\S+)(?:\s+\?(?P<selectors>\S+))?\s*$|^$")
     def receive(self):
