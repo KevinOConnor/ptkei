@@ -1,5 +1,8 @@
 2003-05-24  Kevin O'Connor  <kevin@ohio.localdomain>
 
+	* empParse.py: Simplify baseDisp class - existing code was a gross
+	premature optimization.
+
 	* empQueue.py, OutWin.py, empParse.py, empCmd.py: Move definition
 	of baseDisp class from empQueue.py to empParse.py.  Also move
 	mechanism for looking up standard parsers to empParse.py.
