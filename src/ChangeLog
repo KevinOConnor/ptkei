@@ -5,6 +5,24 @@
 	* empCmd.py(CmdRefresh): Restore 'rdb' command's ability to prune
 	excess dump commands.
 
+2003-05-26  Laurent Martin  <laurent@lfmm.org>
+
+	* empParse.py: Moved the look_info regex from the body of the
+	getLookInfo function to the module level so that it can be
+	modified by other functions/methods.  
+
+	* empTk.py:  Added tk functions createfilehandler,
+	deletefilehandler and createtimerhandler to the main window widget
+	replacing the use of Tkinter.tkinter that doesn't work when Tcl
+	uses threads. 
+
+	* LoginWin.py: Added tk functions createfilehandler,
+	deletefilehandler and createtimerhandler to the main window widget
+	replacing the use of Tkinter.tkinter that doesn't work when Tcl
+	uses threads. The initialization of these functions to cope with
+	platforms that do not support them has been placed into a
+	function. 
+
 2003-05-24  Kevin O'Connor  <kevin@ohio.localdomain>
 
 	* empParse.py: Simplify baseDisp class - existing code was a gross
