@@ -639,6 +639,8 @@ def sectorPredictions(ldb):
     eff = ldb.get('eff', 100)
     if sdes != '_' or eff < 100:
         neweff, newdes = eff_new(ldb)
+        if newdes is None:
+            return ''
         newdes = empParse.sectorDesignationConvert[newdes]
         s = s + " Builds to a %d%% %s.\n" % (neweff, newdes)
         civ_for_100_eff = civ_needed_for_eff( ldb, 100 ) - civs
