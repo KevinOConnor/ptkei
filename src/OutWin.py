@@ -84,6 +84,7 @@ class CmdCShow(empCmd.baseCommand):
 
     defaultBinding = (('cshow', 5),)
 
+    commandUsage = "cshow {land|plane|ship} [<tech level>]"
     commandFormat = re.compile(r"^(?P<unitType>\S+)(?P<techLevel>.*)$")
     def invoke(self):
         mm = self.parameterMatch
