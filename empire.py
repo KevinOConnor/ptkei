@@ -73,7 +73,7 @@ http://www.python.org/ for more information on upgrading Python.
 """
     sys.exit(1)
 
-VERSION = '1.17.1'
+VERSION = '1.18.0'
 
 ###########################################################################
 #############################  Initialization  ############################
