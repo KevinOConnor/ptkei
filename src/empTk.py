@@ -514,13 +514,13 @@ class mainWin:
 
     def startConn(self):
         """Login callback:  Establish the socket connection."""
-        Tkinter.tkinter.createfilehandler(self.ioq,
+        viewer.Root.tk.createfilehandler(self.ioq,
                                           Tkinter.tkinter.READABLE,
                                           self.HandleSock)
 
     def stopConn(self):
         """Login callback:  Disengage the socket connection."""
-        Tkinter.tkinter.deletefilehandler(self.ioq)
+        viewer.Root.tk.deletefilehandler(self.ioq)
 
     #
     # Misc. utilities:

@@ -348,7 +348,7 @@ class QueueStatus:
 
     def checkQueue(self):
         """Tk timer callback:  Show the queue status."""
-        Tkinter.tkinter.createtimerhandler(500, self.checkQueue)
+        viewer.Root.tk.createtimerhandler(500, self.checkQueue)
         newtime = empDb.megaDB['time'].getCountDown()
         if newtime != self.lasttime:
             hours, minutes, seconds = newtime
