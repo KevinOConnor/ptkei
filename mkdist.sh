@@ -48,7 +48,8 @@ fi
 
 cd $dir
 find . -name CVS -exec rm -r {} \;
-[ -f mkdist.sh ] && rm $dir/mkdist.sh
+[ -f mkdist.sh ] && rm mkdist.sh
+[ -d www ] && rm -r www
 grep -E -e "^version.*$version" empire.py
 if [ $? -ne 0 ]; then
     echo "Version number found in file empire.py doesn't match argument $version" >&2
