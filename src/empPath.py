@@ -49,15 +49,6 @@ def coords_to_str( coords ) :
     x , y  = coords
     return `x` + ',' + `y`
 
-def hexDistance( coordsA, coordsB, world_size):
-    xa, ya = coordsA
-    xb, yb = coordsB
-    size_x, size_y = world_size
-    dx = min(abs((xb-xa) % size_x), abs((xa-xb) % size_x))
-    dy = min(abs((yb-ya) % size_y), abs((ya-yb) % size_y))
-    d = min(dx, dy)
-    return d + max((dx - d) / 2, dy -d)
-
 ##  MobCost is used in the bestpath algorithm.
 ##  Bestpath for navigating, marching and
 ##  exploring needs their own version of

@@ -542,6 +542,16 @@ def sectorWrap(coord):
     return ((coord[0] + halfx)%maxx - halfx,
             (coord[1] + halfy)%maxy - halfy)
 
+def sectorDistance(coordsA, coordsB):
+    """Return the absolute distance between two sectors."""
+    xa, ya = coordsA
+    xb, yb = coordsB
+    size_x, size_y = megaDB['version']['worldsize']
+    dx = min(abs((xb-xa) % size_x), abs((xa-xb) % size_x))
+    dy = min(abs((yb-ya) % size_y), abs((ya-yb) % size_y))
+    d = min(dx, dy)
+    return d + max((dx - d) / 2, dy - d)
+
 def sectorNeighbors(coord):
     """Return a list of all the sectors surrounding COORD."""
     x, y = coord
