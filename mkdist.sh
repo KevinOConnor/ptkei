@@ -31,6 +31,8 @@ fi
 version=$1
 cvstag=$(echo ptkei.$1 | tr "." "_")
 dir=$(echo /tmp/ptkei-$1 | tr "_" ".") 
+distdir=$(echo ptkei-$1 | tr "_" ".")
+
 cd /tmp
 cvs co -r $cvstag ptkei
 if [ $? -ne 0 ]; then
@@ -55,5 +57,5 @@ if [ $? -ne 0 ]; then
 #    exit 1
 fi
 cd /tmp
-tar cvfz $dir.tar.gz $dir
-zip -r $dir.zip $dir
+tar cvfz $distdir.tar.gz $distdir
+zip -r $distdir.zip $distdir
