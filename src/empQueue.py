@@ -773,6 +773,9 @@ class NormalHandler:
     # these messages.
     msgqueue = []
 
+    # empCmd.CmdRefresh expects this to be set:
+    sendRefresh = None
+
 #You have a new telegram waiting ...
 #You have three new announcements waiting ...
 #You lost your capital... better designate one
