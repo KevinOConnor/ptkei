@@ -1,3 +1,9 @@
+2003-07-21  Laurent Martin <laurent@lfmm.org>
+
+	* empParse.py: Replaced counName regexp "\S+" in function
+	GetLookInfo by ".*?" as a country name can contain white spaces
+	(when entered with the edit command).
+
 2003-06-12  Kevin O'Connor  <kevin@ohio.localdomain>
 
 	* empCmd.py, MapWin.py, empTk.py: Added sendRefresh value to
