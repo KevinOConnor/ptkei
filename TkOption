@@ -98,8 +98,24 @@ Ptkei*Map.sectors.nomobSectorText_fill	:	grey
 Ptkei*Map.sectors.enemySector_outline	:	red
 Ptkei*Map.sectors.unownedSector_outline	:	grey
 Ptkei*Map.sectors.unknownSector_outline	:	black
-Ptkei*Map.sectors.seaSector_type	:	\ 
-Ptkei*Map.sectors.seaSectorText_fill	:	blue
+Ptkei*Map.sectors.seaSectorText_fill	:	black
+Ptkei*Map.sectors.seaSector_type	:	polygon
+Ptkei*Map.sectors.seaSector_coords	:	-.9455 -.4375 0.0000 -.9375 \
+						0.0555 -.9375 1.0000 -.4375 \
+						1.0000 0.5000 0.0555 1.0000 \
+						0.0000 1.0000 -.9455 0.5000
+Ptkei*Map.sectors.seaSector_fill	:	azure
+Ptkei*Map.sectors.seaSector_stipple	:	\ 
+Ptkei*Map.sectors.seaSector_outline	:	\ 
+Ptkei*Map.sectors.mineSectorText_fill	:	black
+Ptkei*Map.sectors.mineSector_type	:	polygon
+Ptkei*Map.sectors.mineSector_coords	:	-.9455 -.4375 0.0000 -.9375 \
+						0.0555 -.9375 1.0000 -.4375 \
+						1.0000 0.5000 0.0555 1.0000 \
+						0.0000 1.0000 -.9455 0.5000
+Ptkei*Map.sectors.mineSector_fill	:	yellow
+Ptkei*Map.sectors.mineSector_stipple	:	\ 
+Ptkei*Map.sectors.mineSector_outline	:	\ 
 
 !! Ulf Larsson's preferred settings
 !!
