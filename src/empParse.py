@@ -350,21 +350,21 @@ def getLookInfo(line, unitType = 'UNKNOWN'):
         r"^ with (?:approx )?(?P<val>\d+) (?P<comd>\S+)(?P<next>.*)$")
 
     if 'SHIPNAMES' in empDb.megaDB['version']['enabledOptions']:
-        look_ship_info = re.compile(r"^\s*(?P<counName>\S+)\s+"
+        look_ship_info = re.compile(r"^\s*(?P<counName>.*?)\s+"
                                     +r"\(\#\s*(?P<counId>\d+)\)\s+"
                                     +r"(?P<shipType>\S+).*"
                                     +r"\(\#(?P<shipId>\d+)\)\s+"
                                     +r"@ (?P<sectorX>-?\d+),(?P<sectorY>-?\d+)\s*$"
                                     )
     else:
-        look_ship_info = re.compile(r"^\s*(?P<counName>\S+)\s+"
+        look_ship_info = re.compile(r"^\s*(?P<counName>.*?)\s+"
                                     +r"\(\#(\s*?P<counId>\d+)\)\s+"
                                     +r"(?P<shipType>\S+).*"
                                     +r"\#(?P<shipId>\d+)\s+"
                                     +r"@ (?P<sectorX>-?\d+),(?P<sectorY>-?\d+)\s*$"
                                     )
 
-    look_land_info = re.compile(r"^(?P<counName>\S+)\s+"
+    look_land_info = re.compile(r"^(?P<counName>.*?)\s+"
                                 +r"\(\#(?P<counId>\d+)\)\s+"
                                 +r"(?P<landType>\S+).*"
                                 +r"\#(?P<landId>\d+)\s+"
@@ -372,7 +372,7 @@ def getLookInfo(line, unitType = 'UNKNOWN'):
                                 +r"@ (?P<sectorX>-?\d+),(?P<sectorY>-?\d+)\s*$"
                                 )
     
-    look_plane_info = re.compile(r"^(?P<counName>\S+)\s+"
+    look_plane_info = re.compile(r"^(?P<counName>.*?)\s+"
                                  +r"\(\#(?P<counId>\d+)\)\s+"
                                  +r"(?P<planeType>\S+).*"
                                  +r"\#(?P<planeId>\d+)\s+"
