@@ -112,6 +112,11 @@ def updateDesignations(lst, mapType):
             continue
         if t == 'X' and mapType == 'bmap' and olddes == '.':
             ndict['des'] = t
+        elif t == '.' and olddes == 'X':
+            if mapType == 'bmap':
+                ndict['des'] = t
+            else:
+                continue
         elif mapType in ('bmap', 'land'):
             # bmap
             if t == ' ':
