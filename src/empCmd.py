@@ -884,13 +884,15 @@ class CmdEMove(baseCommand):
                 ("(xloc+0,yloc+0), __db[1], int("+commodity+"-("+slevel
                  +")), int(mob-("+mob+"))"),
                 'SECTOR')
+
             # Return a list for destination sectors that contains tuples of the
             # form: ((x, y), sectDB)
             dlist = empEval.foreach(
-                ("owner!=-1 and "+empEval.selectToExpr('SECTOR',
+                (empEval.selectToExpr('SECTOR',
                     mm.group('sectors2'), mm.group('selectors2'))),
                 "(xloc+0,yloc+0), __db[1]",
                 'SECTOR')
+
         except empEval.error, e:
             viewer.Error(e)
             return
