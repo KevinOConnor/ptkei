@@ -1,0 +1,19 @@
+#use wml::tmpl::template name=ptkei select=screenshots
+
+<titre>Macintosh Screenshots of PTkEI 0.32</titre>
+<table>
+<tr>
+<td>
+<a href="Mac1.png">
+<img src="Mac1-mini.png">
+</a>
+<td>
+<a href="Mac2.png">
+<img src="Mac2-mini.png">
+</a>
+</tr>
+</table>
+
+<p> The above pictures are courtesy of Daniel DEOCAMPO.
+
+</body> </html>
