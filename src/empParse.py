@@ -161,8 +161,6 @@ def updateDesignations(lst, mapType):
                 ndict['des'] = t
             else:
                 # normal maps
-                if t != '-':
-                    ndict['owner'] = CN_OWNED
                 ndict['des'] = t
         ndict['x'] = col
         ndict['y'] = row
