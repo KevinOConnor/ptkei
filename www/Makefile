@@ -3,7 +3,7 @@ SRCS = $(shell ls *.wml)
 OBJS = $(subst .wml,.html,$(SRCS))
 
 %.html: %.wml
-	wml -n -o $@ $<
+	wml -W2,--expansion=3082 -n -o $@ $<
 
 all: $(OBJS)
 	(cd doc;$(MAKE) all)
