@@ -8,7 +8,7 @@ OBJS = $(subst .wml,.html,$(SRCS))
 
 all: $(OBJS)
 	$(CP) ../../doc/*.html .
-	mkdir pics
+	if [ ! -d pics ]; then mkdir pics;fi
 	$(CP) ../../doc/pics/*.png pics
 
 clean:
@@ -19,3 +19,4 @@ clean:
 dist-clean:
 	$(RM) *~
 
+index.html: index.wml ../tmpl/template.wml
