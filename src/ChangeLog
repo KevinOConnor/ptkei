@@ -1,3 +1,10 @@
+2003-05-28  Kevin O'Connor  <kevin@ohio.localdomain>
+
+	* empCmd.py, empQueue.py: Remove dummyHandler from empQueue and
+	make the normal command class compatible with EmpIOQueue.
+	* empCmd.py(CmdRefresh): Restore 'rdb' command's ability to prune
+	excess dump commands.
+
 2003-05-24  Kevin O'Connor  <kevin@ohio.localdomain>
 
 	* empParse.py: Simplify baseDisp class - existing code was a gross
